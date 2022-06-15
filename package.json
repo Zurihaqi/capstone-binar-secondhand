@@ -1,21 +1,30 @@
 {
-  "name": "demo",
-  "version": "0.0.0",
-  "private": true,
+  "name": "be-finalproject-kel7",
+  "version": "1.0.0",
+  "description": "This project is based on a GitLab [Project Template](https://docs.gitlab.com/ee/gitlab-basics/create-project.html).",
+  "main": "app.js",
+  "directories": {
+    "test": "test"
+  },
   "scripts": {
-    "start": "node ./bin/www",
-    "test": "mocha"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://gitlab.com/be-finalproject-kel7/be-finalproject-kel7.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://gitlab.com/be-finalproject-kel7/be-finalproject-kel7/issues"
+  },
+  "homepage": "https://gitlab.com/be-finalproject-kel7/be-finalproject-kel7#readme",
   "dependencies": {
-    "cookie-parser": "~1.4.3",
-    "debug": "~2.6.9",
-    "express": "~4.16.0",
-    "http-errors": "~1.6.2",
-    "morgan": "~1.9.0",
-    "pug": "2.0.0-beta11"
-  },
-  "devDependencies": {
-    "mocha": "^5.1.1",
-    "supertest": "^3.0.0"
+    "dotenv": "^16.0.1",
+    "express": "^4.18.1",
+    "pg": "^8.7.3",
+    "pg-hstore": "^2.3.4",
+    "sequelize": "^6.20.1"
   }
 }
