@@ -3,7 +3,7 @@ const productRoutes = require('./product.route');
 const productImageRoutes = require('./productImage.route');
 
 router.use('/products', productRoutes);
-router.use('/product-image', productImageRoutes);
+router.use('/product-images', productImageRoutes);
 
 //page not found handler, selalu tempatkan di paling bawah
 router.use((req, res) => {

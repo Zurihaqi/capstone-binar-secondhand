@@ -1,17 +1,17 @@
 const { ProductImage, Product } = require("../db/models");
 
-const options = [{
+const options = {
     attributes: {
         exclude: ['created_at', 'updated_at'],
-        include: 
-        [{
-            model: Product,
-            attributes: {
-                exclude: ["created_at", "updated_at"]
-            }   
-        }]
-    }
-}];
+    },
+    include: 
+    [{
+        model: Product,
+        attributes: {
+            exclude: ["created_at", "updated_at"]
+        }   
+    }]
+};
 
 const getAllProductImage = async (req, res) => {
     try{

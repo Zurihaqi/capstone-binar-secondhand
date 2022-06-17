@@ -1,23 +1,23 @@
 const { Product, User, Category } = require('../db/models/');
 
-const options = [{
+const options = {
     attributes: {
         exclude: ['created_at', 'updated_at'],
-        include: 
-        [{
-            model: Category,
-            attributes: {
-                exclude: ["created_at", "updated_at"]
-            }   
-        },
-        {
-            model: User,
-            attributes: {
-                exclude: ["created_at", "updated_at"]
-            }
-        }]
-    }
-}];
+    },
+    include: 
+    [{
+        model: Category,
+        attributes: {
+            exclude: ["created_at", "updated_at"]
+        }   
+    },
+    {
+        model: User,
+        attributes: {
+            exclude: ["created_at", "updated_at"]
+        }
+    }]
+};
 
 const getAllProducts = async (req, res) => {
     try{
