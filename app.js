@@ -6,7 +6,6 @@ const logger = require("morgan");
 
 // call all module route here
 const router = require("./server/routes/app.routes");
-const authRouter = require("./app/api/auth/router");
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -20,6 +19,5 @@ app.use("/", (req, res) => {
 });
 
 app.use("/api", router);
-app.use(authRouter);
 
 module.exports = app;
