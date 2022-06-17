@@ -1,84 +1,58 @@
 "use strict";
-
 module.exports = {
   async up(queryInterface, Sequelize) {
-    /**
-     * Add altering commands here.
-     *
-     * Example:
-     * await queryInterface.createTable('users', { id: Sequelize.INTEGER });
-     */
-    await queryInterface.createTable("transactions", {
+    await queryInterface.createTable("Products", {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
-      payment_status: {
+      name: {
         type: Sequelize.STRING,
         allowNull: false,
-      },
-      invoice_code: {
-        type: Sequelize.STRING,
-        allowNull: false,
-        unique: true,
       },
       price: {
         type: Sequelize.INTEGER,
         allowNull: false,
       },
-      buyer_id: {
+      description: {
+        type: Sequelize.TEXT,
+        allowNull: false,
+      },
+      users_id: {
         type: Sequelize.DataTypes.INTEGER,
         references: {
           model: {
-            tableName: "users",
+            tableName: "Users",
           },
           key: "id",
         },
         allowNull: false,
         unique: true,
       },
-      seller_id: {
+      categories_id: {
         type: Sequelize.DataTypes.INTEGER,
         references: {
           model: {
-            tableName: "users",
+            tableName: "Categories",
           },
           key: "id",
         },
         allowNull: false,
         unique: true,
       },
-      products_id: {
-        type: Sequelize.DataTypes.INTEGER,
-        references: {
-          model: {
-            tableName: "products",
-          },
-          key: "id",
-        },
-        allowNull: false,
-        unique: true,
-      },
-      created_at: {
+      createdAt: {
         allowNull: false,
         type: Sequelize.DATE,
       },
-      updated_at: {
+      updatedAt: {
         allowNull: false,
         type: Sequelize.DATE,
       },
     });
   },
-
   async down(queryInterface, Sequelize) {
-    /**
-     * Add reverting commands here.
-     *
-     * Example:
-     * await queryInterface.dropTable('users');
-     */
-    await queryInterface.dropTable("transactions");
+    await queryInterface.dropTable("Products");
   },
 };
