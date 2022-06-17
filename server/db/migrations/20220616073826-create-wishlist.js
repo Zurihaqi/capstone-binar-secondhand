@@ -1,14 +1,14 @@
-'use strict';
+"use strict";
 
 module.exports = {
-  async up (queryInterface, Sequelize) {
+  async up(queryInterface, Sequelize) {
     /**
      * Add altering commands here.
      *
      * Example:
      * await queryInterface.createTable('users', { id: Sequelize.INTEGER });
      */
-    await queryInterface.createTable('wishlists',{
+    await queryInterface.createTable("wishlists", {
       user_id: {
         type: Sequelize.DataTypes.INTEGER,
         references: {
@@ -39,16 +39,16 @@ module.exports = {
         allowNull: false,
         type: Sequelize.DATE,
       },
-    })
+    });
   },
 
-  async down (queryInterface, Sequelize) {
+  async down(queryInterface, Sequelize) {
     /**
      * Add reverting commands here.
      *
      * Example:
      * await queryInterface.dropTable('users');
      */
-     await queryInterface.dropTable("wishlists");
-  }
+    await queryInterface.dropTable("wishlists");
+  },
 };

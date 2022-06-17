@@ -5,6 +5,8 @@ const logger = require("morgan");
 // call all module route here
 const authRouter = require("./app/api/auth/router");
 
+require("dotenv").config();
+const express = require("express");
 const app = express();
 
 app.use(logger("dev"));
