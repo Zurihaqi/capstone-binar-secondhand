@@ -14,7 +14,7 @@ const options = {
     {
       model: User,
       attributes: {
-        exclude: ["createdAt", "updatedAt"],
+        exclude: ["password", "createdAt", "updatedAt"],
       },
     },
   ],
