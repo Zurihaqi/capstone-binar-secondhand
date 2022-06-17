@@ -16,9 +16,17 @@ const cloudinaryUpload = async (req, res, next) => {
       resource_type: "auto",
     });
     req.body.uploadResult = uploadResult;
-    req.body.image_url = uploadResult.secure_url;
     next();
   } catch (error) {
+    if (
+      error.message ===
+      "Cannot read properties of undefined (reading 'mimetype')"
+    ) {
+      return res.status(400).json({
+        status: "Error",
+        message: "image cannot be empty",
+      });
+    }
     return res.status(500).json({
       status: "Internal server error",
       message: error.message,
