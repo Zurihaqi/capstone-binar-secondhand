@@ -1,7 +1,15 @@
 "use strict";
 
+<<<<<<< HEAD
 const bcrypt = require("bcrypt");
 const { Model } = require("sequelize");
+=======
+require('dotenv').config();
+const bcrypt = require('bcrypt');
+const {
+    Model
+} = require('sequelize');
+>>>>>>> zul/products_product_images_controller
 
 module.exports = (sequelize, DataTypes) => {
   class User extends Model {
