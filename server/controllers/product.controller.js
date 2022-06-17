@@ -2,19 +2,19 @@ const { Product, User, Category } = require("../db/models/");
 
 const options = {
   attributes: {
-    exclude: ["created_at", "updated_at"],
+    exclude: ["createdAt", "updatedAt"],
   },
   include: [
     {
       model: Category,
       attributes: {
-        exclude: ["created_at", "updated_at"],
+        exclude: ["createdAt", "updatedAt"],
       },
     },
     {
       model: User,
       attributes: {
-        exclude: ["created_at", "updated_at"],
+        exclude: ["createdAt", "updatedAt"],
       },
     },
   ],
@@ -29,13 +29,12 @@ const getAllProducts = async (req, res) => {
     if (row) options.limit = +row;
 
     const allProducts = await Product.findAll(options);
-    if (allProducts) {
+    if (!allProducts == null) {
       return res.status(200).json({
         status: "Success",
         data: allProducts,
       });
     }
-    //error handler ketika tabel products kosong
     throw {
       code: 404,
       status: "Not Found",

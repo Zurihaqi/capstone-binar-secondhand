@@ -16,6 +16,7 @@ const cloudinaryUpload = async (req, res, next) => {
       resource_type: "auto",
     });
     req.body.uploadResult = uploadResult;
+    req.body.image_url = uploadResult.secure_url;
     next();
   } catch (error) {
     return res.status(500).json({

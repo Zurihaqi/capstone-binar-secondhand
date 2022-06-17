@@ -2,13 +2,13 @@ const { ProductImage, Product } = require("../db/models");
 
 const options = {
   attributes: {
-    exclude: ["created_at", "updated_at"],
+    exclude: ["createdAt", "updatedAt"],
   },
   include: [
     {
       model: Product,
       attributes: {
-        exclude: ["created_at", "updated_at"],
+        exclude: ["createdAt", "updatedAt"],
       },
     },
   ],
@@ -53,7 +53,7 @@ const getProductImageById = async (req, res) => {
       req.params.id,
       options
     );
-    if (foundProductImage) {
+    if (!foundProductImage == null) {
       return res.status(200).json({
         status: "Success",
         data: foundProductImage,

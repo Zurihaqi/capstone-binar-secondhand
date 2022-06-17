@@ -14,20 +14,20 @@ router.get(
 );
 router.post(
   "/",
-  validation.createProductImage(),
-  validate,
-  multer.imageUpload.single("product_image"),
+  multer.imageUpload.single("image_url"),
   multer.fileSizeLimitErrorHandler,
   cloudinaryUpload,
+  validation.createProductImage(),
+  validate,
   controller.createProductImage
 );
 router.patch(
   "/:id",
-  validation.updateProductImage(),
-  validate,
-  multer.imageUpload.single("product_image"),
+  multer.imageUpload.single("image_url"),
   multer.fileSizeLimitErrorHandler,
   cloudinaryUpload,
+  validation.updateProductImage(),
+  validate,
   controller.updateProductImage
 );
 router.delete(

@@ -7,16 +7,16 @@ module.exports = {
     const cityData = citiesMasterdata.map((eachCityData) => {
       return {
         name: eachCityData.name,
-        created_at: new Date(),
-        updated_at: new Date(),
+        createdAt: new Date(),
+        updatedAt: new Date(),
       };
     });
     const sortByCityName = cityData.sort((a, b) => (a.name > b.name ? 1 : -1));
-    await queryInterface.bulkInsert("cities", sortByCityName);
+    await queryInterface.bulkInsert("Cities", sortByCityName);
   },
 
   async down(queryInterface, Sequelize) {
-    await queryInterface.bulkDelete("cities", null, {
+    await queryInterface.bulkDelete("Cities", null, {
       truncate: true,
       cascade: true,
       restartIdentity: true,
