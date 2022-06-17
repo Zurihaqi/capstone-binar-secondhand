@@ -29,17 +29,17 @@ const getAllProducts = async (req, res) => {
     if (row) options.limit = +row;
 
     const allProducts = await Product.findAll(options);
-    if (!allProducts == null) {
-      return res.status(200).json({
-        status: "Success",
-        data: allProducts,
-      });
+    if (allProducts[0] == null) {
+      throw {
+        code: 404,
+        status: "Not Found",
+        message: `Products table is empty`,
+      };
     }
-    throw {
-      code: 404,
-      status: "Not Found",
-      message: `Products table is empty`,
-    };
+    return res.status(200).json({
+      status: "Success",
+      data: allProducts,
+    });
   } catch (error) {
     //jika error memiliki "error.code" yang dilemparkan, akan dikirimkan ke error handler ini
     if (error.code) {

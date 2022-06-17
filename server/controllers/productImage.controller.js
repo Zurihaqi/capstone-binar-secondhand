@@ -22,17 +22,17 @@ const getAllProductImage = async (req, res) => {
     if (row) options.limit = +row;
 
     const allProductImage = await ProductImage.findAll(options);
-    if (allProductImage) {
-      return res.status(200).json({
-        status: "Success",
-        data: allProductImage,
-      });
+    if (allProductImage[0] == null) {
+      throw {
+        code: 404,
+        status: "Not Found",
+        message: `ProductImage table is empty`,
+      };
     }
-    throw {
-      code: 404,
-      status: "Not Found",
-      message: `ProductImage table is empty`,
-    };
+    return res.status(200).json({
+      status: "Success",
+      data: allProductImage,
+    });
   } catch (error) {
     if (error.code) {
       return res.status(error.code).json({
