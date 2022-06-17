@@ -1,6 +1,5 @@
 "use strict";
 const { Model } = require("sequelize");
-
 module.exports = (sequelize, DataTypes) => {
   class Wishlist extends Model {
     /**
@@ -9,6 +8,7 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
+      // define association here
       Wishlist.belongsTo(models.User, {
         foreignKey: "users_id",
       });
@@ -17,7 +17,6 @@ module.exports = (sequelize, DataTypes) => {
       });
     }
   }
-
   Wishlist.init(
     {
       users_id: DataTypes.INTEGER,
@@ -28,6 +27,5 @@ module.exports = (sequelize, DataTypes) => {
       modelName: "Wishlist",
     }
   );
-
   return Wishlist;
 };

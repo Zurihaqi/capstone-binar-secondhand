@@ -1,33 +1,42 @@
 "use strict";
-
 module.exports = {
   async up(queryInterface, Sequelize) {
-    /**
-     * Add altering commands here.
-     *
-     * Example:
-     * await queryInterface.createTable('users', { id: Sequelize.INTEGER });
-     */
-    await queryInterface.createTable("tenders", {
+    await queryInterface.createTable("Transactions", {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
-      offer_status: {
+      payment_status: {
         type: Sequelize.STRING,
         allowNull: false,
+      },
+      invoice_code: {
+        type: Sequelize.STRING,
+        allowNull: false,
+        unique: true,
       },
       price: {
         type: Sequelize.INTEGER,
         allowNull: false,
       },
-      users_id: {
+      buyer_id: {
         type: Sequelize.DataTypes.INTEGER,
         references: {
           model: {
-            tableName: "users",
+            tableName: "Users",
+          },
+          key: "id",
+        },
+        allowNull: false,
+        unique: true,
+      },
+      seller_id: {
+        type: Sequelize.DataTypes.INTEGER,
+        references: {
+          model: {
+            tableName: "Users",
           },
           key: "id",
         },
@@ -38,31 +47,24 @@ module.exports = {
         type: Sequelize.DataTypes.INTEGER,
         references: {
           model: {
-            tableName: "products",
+            tableName: "Products",
           },
           key: "id",
         },
         allowNull: false,
         unique: true,
       },
-      created_at: {
+      createdAt: {
         allowNull: false,
         type: Sequelize.DATE,
       },
-      updated_at: {
+      updatedAt: {
         allowNull: false,
         type: Sequelize.DATE,
       },
     });
   },
-
   async down(queryInterface, Sequelize) {
-    /**
-     * Add reverting commands here.
-     *
-     * Example:
-     * await queryInterface.dropTable('users');
-     */
-    await queryInterface.dropTable("tenders");
+    await queryInterface.dropTable("Transactions");
   },
 };
