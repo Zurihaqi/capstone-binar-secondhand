@@ -1,6 +1,6 @@
 const multer = require("multer");
 const fileSizeLimitErrorHandler = (error, req, res, next) => {
-  if (error) {
+  if (error.code === "LIMIT_FILE_SIZE") {
     return res.status(400).json({
       status: "Error",
       message: "File size too big. Max image size is 5MB",

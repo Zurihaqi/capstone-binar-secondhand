@@ -82,6 +82,16 @@ const createProductImage = async (req, res) => {
   try {
     const { products_id } = req.body;
 
+    //Cek apakah products_id ada dalam database sebelum membuat product image
+    const checkIfProductIdExist = await Product.findByPk(products_id);
+
+    if (!checkIfProductIdExist)
+      throw {
+        code: 404,
+        status: "Not found",
+        message: `Product with id ${products_id} doesn't exist in database`,
+      };
+
     const productImageCreated = await ProductImage.create({
       image_url: req.body.uploadResult.secure_url,
       products_id: products_id,
@@ -108,6 +118,14 @@ const createProductImage = async (req, res) => {
 const updateProductImage = async (req, res) => {
   try {
     const { products_id } = req.body;
+    const checkIfProductIdExist = await Product.findByPk(products_id);
+
+    if (!checkIfProductIdExist)
+      throw {
+        code: 404,
+        status: "Not found",
+        message: `Product with id ${products_id} doesn't exist in database`,
+      };
 
     const productImageUpdated = await ProductImage.update(
       {

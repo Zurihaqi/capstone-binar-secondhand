@@ -16,18 +16,18 @@ router.post(
   "/",
   multer.imageUpload.single("image_url"),
   multer.fileSizeLimitErrorHandler,
-  cloudinaryUpload,
   validation.createProductImage(),
   validate,
+  cloudinaryUpload,
   controller.createProductImage
 );
 router.patch(
   "/:id",
   multer.imageUpload.single("image_url"),
   multer.fileSizeLimitErrorHandler,
-  cloudinaryUpload,
   validation.updateProductImage(),
   validate,
+  cloudinaryUpload,
   controller.updateProductImage
 );
 router.delete(
