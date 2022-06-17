@@ -7,8 +7,8 @@ module.exports = {
     const cityData = citiesMasterdata.map((eachCityData) => {
       return{
         "name": eachCityData.name,
-        "created_at": new Date().toLocaleString('en-GB', {timezone: 'UTC+7'}),
-        "updated_at": new Date().toLocaleString('en-GB', {timezone: 'UTC+7'})
+        "created_at": new Date(),
+        "updated_at": new Date()
       };
     });
     const sortByCityName = cityData.sort((a, b) => a.name > b.name ? 1 : -1);
