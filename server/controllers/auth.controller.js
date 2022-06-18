@@ -18,23 +18,23 @@ module.exports = {
               id: checkUser.id,
               name: checkUser.name,
               email: checkUser.email,
-              photo_profile: checkUser.photo_profile
+              photo_profile: checkUser.photo_profile,
             },
             "secretkey"
           );
 
           res.status(200).json({
             message: "Login berhasil",
-            data: token
+            data: token,
           });
         } else {
           res.status(404).json({
-            message: "Password pengguna salah"
+            message: "Password pengguna salah",
           });
         }
       } else {
         res.status(404).json({
-          message: "Email pengguna tidak ditemukan"
+          message: "Email pengguna tidak ditemukan",
         });
       }
     } catch (error) {
@@ -44,25 +44,29 @@ module.exports = {
   },
   signup: async (req, res, next) => {
     try {
-      const (name, email, password, confirmPassword) = req.body;
+      const { name, email, password, confirmPassword } = req.body;
 
       if (password !== confirmPassword) {
-        res.status(403).json({ message: 'Password tidak cocok' });
+        res.status(403).json({ message: "Password tidak cocok" });
       }
 
       const checkEmail = await User.findOne({ where: { email: email } });
       if (checkEmail) {
-        return res.status(403).json({ message: 'Email sudah terdaftar' });
+        return res.status(403).json({ message: "Email sudah terdaftar" });
       }
-      const user = await User.create({ name, email, password: bcrypt.hashSync(password, 10), role: 'admin' });
+      const user = await User.create({
+        name,
+        email,
+        password: bcrypt.hashSync(password, 10),
+        role: "admin",
+      });
       delete user.dataValues.password;
       res.status(201).json({
-        message: 'Berhasil mendaftar',
+        message: "Berhasil mendaftar",
         data: user,
-
       });
     } catch (error) {
       next(err);
     }
-  }
+  },
 };
