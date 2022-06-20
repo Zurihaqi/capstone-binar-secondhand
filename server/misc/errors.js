@@ -10,9 +10,9 @@ module.exports = {
   EMPTY_TABLE: new apiError(404, "Not found", "Table is empty"),
   PRODUCT_NOT_FOUND: (id) => {
     const error = new apiError(
-      404,
-      "Not found",
-      `Product with id ${id} not found`
+      404, //code
+      "Not found", //status
+      `Product with id ${id} not found` //message
     );
     return error;
   },
@@ -27,7 +27,7 @@ module.exports = {
   CATEGORY_NOT_FOUND: (id) => {
     const error = new apiError(
       404,
-      "not found",
+      "Not found",
       `Category with id ${id} not found`
     );
     return error;
