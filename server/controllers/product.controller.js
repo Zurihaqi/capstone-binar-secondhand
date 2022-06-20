@@ -21,7 +21,7 @@ const options = {
   ],
 };
 
-const getAllProducts = async (req, res) => {
+const getAllProducts = async (req, res, next) => {
   try {
     //pagination, row = limit, skip = offset
     let { skip, row } = req.query;
@@ -39,22 +39,11 @@ const getAllProducts = async (req, res) => {
       data: allProducts,
     });
   } catch (error) {
-    //jika error memiliki "error.code" yang dilemparkan, akan dikirimkan ke error handler ini
-    if (error.code) {
-      return res.status(error.code).json({
-        status: error.status,
-        message: error.message,
-      });
-    }
-    //jika tidak ada "error.code" yang dilemparkan, akan dianggap sebagai internal server error
-    return res.status(500).json({
-      status: "Internal server error",
-      message: error.message,
-    });
+    next(error);
   }
 };
 
-const getProductById = async (req, res) => {
+const getProductById = async (req, res, next) => {
   try {
     const foundProduct = await Product.findByPk(req.params.id, options);
     if (foundProduct) {
@@ -65,20 +54,11 @@ const getProductById = async (req, res) => {
     }
     throw errors.PRODUCT_NOT_FOUND(req.params.id);
   } catch (error) {
-    if (error.code) {
-      return res.status(error.code).json({
-        status: error.status,
-        message: error.message,
-      });
-    }
-    return res.status(500).json({
-      status: "Internal server error",
-      message: error.message,
-    });
+    next(error);
   }
 };
 
-const createProduct = async (req, res) => {
+const createProduct = async (req, res, next) => {
   try {
     const { name, price, description, users_id, categories_id } = req.body;
 
@@ -102,20 +82,11 @@ const createProduct = async (req, res) => {
       data: productCreated,
     });
   } catch (error) {
-    if (error.code) {
-      return res.status(error.code).json({
-        status: error.status,
-        message: error.message,
-      });
-    }
-    return res.status(500).json({
-      status: "Internal server error",
-      message: error.message,
-    });
+    next(error);
   }
 };
 
-const updateProduct = async (req, res) => {
+const updateProduct = async (req, res, next) => {
   try {
     const { name, price, description, users_id, categories_id } = req.body;
     const checkIfUserExist = await User.findByPk(users_id);
@@ -147,20 +118,11 @@ const updateProduct = async (req, res) => {
     }
     throw errors.PRODUCT_NOT_FOUND(req.params.id);
   } catch (error) {
-    if (error.code) {
-      return res.status(error.code).json({
-        status: error.status,
-        message: error.message,
-      });
-    }
-    return res.status(500).json({
-      status: "Internal server error",
-      message: error.message,
-    });
+    next(error);
   }
 };
 
-const deleteProduct = async (req, res) => {
+const deleteProduct = async (req, res, next) => {
   try {
     const productDeleted = await Product.destroy({
       where: {
@@ -175,16 +137,7 @@ const deleteProduct = async (req, res) => {
     }
     throw errors.PRODUCT_NOT_FOUND(req.params.id);
   } catch (error) {
-    if (error.code) {
-      return res.status(error.code).json({
-        status: error.status,
-        message: error.message,
-      });
-    }
-    return res.status(500).json({
-      status: "Internal server error",
-      message: error.message,
-    });
+    next(error);
   }
 };
 

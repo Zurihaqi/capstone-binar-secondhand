@@ -7,6 +7,7 @@ class apiError extends Error {
 }
 
 module.exports = {
+  //pesan-pesan error, tambah sesuai kebutuhan
   EMPTY_TABLE: new apiError(404, "Not found", "Table is empty"),
   PRODUCT_NOT_FOUND: (id) => {
     const error = new apiError(
