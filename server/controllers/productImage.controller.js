@@ -41,13 +41,13 @@ const getProductImageById = async (req, res, next) => {
       req.params.id,
       options
     );
-    if (!foundProductImage == null) {
+    if (foundProductImage) {
       return res.status(200).json({
         status: "Success",
         data: foundProductImage,
       });
     }
-    throw errors.PRODUCT_IMAGE_NOT_FOUND(req.params.id);
+    throw errors.NOT_FOUND("Product image", req.params.id);
   } catch (error) {
     next(error);
   }
@@ -60,7 +60,7 @@ const createProductImage = async (req, res, next) => {
     //Cek apakah products_id ada dalam database sebelum membuat product image
     const checkIfProductIdExist = await Product.findByPk(products_id);
 
-    if (!checkIfProductIdExist) throw errors.PRODUCT_NOT_FOUND(products_id);
+    if (!checkIfProductIdExist) throw errors.NOT_FOUND("Product", products_id);
 
     const productImageCreated = await ProductImage.create({
       image_url: req.body.image_url,
@@ -81,7 +81,7 @@ const updateProductImage = async (req, res, next) => {
     const { products_id } = req.body;
     const checkIfProductIdExist = await Product.findByPk(products_id);
 
-    if (!checkIfProductIdExist) throw errors.PRODUCT_NOT_FOUND(products_id);
+    if (!checkIfProductIdExist) throw errors.NOT_FOUND("Product", products_id);
 
     const productImageUpdated = await ProductImage.update(
       {
@@ -101,7 +101,7 @@ const updateProductImage = async (req, res, next) => {
         data: productImageUpdated,
       });
     }
-    throw errors.PRODUCT_IMAGE_NOT_FOUND(req.params.id);
+    throw errors.NOT_FOUND("Product image", req.params.id);
   } catch (error) {
     next(error);
   }
@@ -120,7 +120,7 @@ const deleteProductImage = async (req, res, next) => {
         status: `ProductImage with id ${req.params.id} deleted successfully`,
       });
     }
-    throw errors.PRODUCT_IMAGE_NOT_FOUND(req.params.id);
+    throw errors.NOT_FOUND("Product image", req.params.id);
   } catch (error) {
     next(error);
   }
