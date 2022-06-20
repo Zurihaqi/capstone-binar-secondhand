@@ -1,4 +1,5 @@
 const { Product, User, Category } = require("../db/models/");
+const errors = require("../misc/errors");
 
 const options = {
   attributes: {
@@ -29,12 +30,9 @@ const getAllProducts = async (req, res) => {
     if (row) options.limit = +row;
 
     const allProducts = await Product.findAll(options);
+    //error handler ketika tabel kosong
     if (allProducts[0] == null) {
-      throw {
-        code: 404,
-        status: "Not Found",
-        message: `Products table is empty`,
-      };
+      throw errors.EMPTY_TABLE;
     }
     return res.status(200).json({
       status: "Success",
@@ -65,11 +63,7 @@ const getProductById = async (req, res) => {
         data: foundProduct,
       });
     }
-    throw {
-      code: 404,
-      status: "Not Found",
-      message: `Product with id ${req.params.id} not found`,
-    };
+    throw errors.PRODUCT_NOT_FOUND(req.params.id);
   } catch (error) {
     if (error.code) {
       return res.status(error.code).json({
@@ -92,18 +86,8 @@ const createProduct = async (req, res) => {
     const checkIfUserExist = await User.findByPk(users_id);
     const checkIfCategoryExist = await Category.findByPk(categories_id);
 
-    if (!checkIfUserExist)
-      throw {
-        code: 404,
-        status: "Not found",
-        message: `User with id ${users_id} doesn't exist in database`,
-      };
-    if (!checkIfCategoryExist)
-      throw {
-        code: 404,
-        status: "Not found",
-        message: `Category with id ${categories_id} doesn't exist in database`,
-      };
+    if (!checkIfUserExist) throw errors.USER_NOT_FOUND(users_id);
+    if (!checkIfCategoryExist) throw errors.CATEGORY_NOT_FOUND(categories_id);
 
     const productCreated = await Product.create({
       name: name,
@@ -137,18 +121,8 @@ const updateProduct = async (req, res) => {
     const checkIfUserExist = await User.findByPk(users_id);
     const checkIfCategoryExist = await Category.findByPk(categories_id);
 
-    if (!checkIfUserExist)
-      throw {
-        code: 404,
-        status: "Not found",
-        message: `User with id ${users_id} doesn't exist in database`,
-      };
-    if (!checkIfCategoryExist)
-      throw {
-        code: 404,
-        status: "Not found",
-        message: `Category with id ${categories_id} doesn't exist in database`,
-      };
+    if (!checkIfUserExist) throw errors.USER_NOT_FOUND(users_id);
+    if (!checkIfCategoryExist) throw errors.CATEGORY_NOT_FOUND(categories_id);
 
     const productUpdated = await Product.update(
       {
@@ -171,11 +145,7 @@ const updateProduct = async (req, res) => {
         data: productUpdated,
       });
     }
-    throw {
-      code: 404,
-      status: "Not found",
-      message: `Product with id ${req.params.id} not found`,
-    };
+    throw errors.PRODUCT_NOT_FOUND(req.params.id);
   } catch (error) {
     if (error.code) {
       return res.status(error.code).json({
@@ -203,11 +173,7 @@ const deleteProduct = async (req, res) => {
         status: `Product with id ${req.params.id} deleted successfully`,
       });
     }
-    throw {
-      code: 404,
-      status: "Not found",
-      message: `Product with id ${req.params.id} not found`,
-    };
+    throw errors.PRODUCT_NOT_FOUND(req.params.id);
   } catch (error) {
     if (error.code) {
       return res.status(error.code).json({
