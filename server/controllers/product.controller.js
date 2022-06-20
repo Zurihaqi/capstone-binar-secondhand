@@ -52,7 +52,7 @@ const getProductById = async (req, res, next) => {
         data: foundProduct,
       });
     }
-    throw errors.PRODUCT_NOT_FOUND(req.params.id);
+    throw errors.NOT_FOUND("Product", req.params.id);
   } catch (error) {
     next(error);
   }
@@ -66,8 +66,9 @@ const createProduct = async (req, res, next) => {
     const checkIfUserExist = await User.findByPk(users_id);
     const checkIfCategoryExist = await Category.findByPk(categories_id);
 
-    if (!checkIfUserExist) throw errors.USER_NOT_FOUND(users_id);
-    if (!checkIfCategoryExist) throw errors.CATEGORY_NOT_FOUND(categories_id);
+    if (!checkIfUserExist) throw errors.NOT_FOUND("User", users_id);
+    if (!checkIfCategoryExist)
+      throw errors.NOT_FOUND("Category", categories_id);
 
     const productCreated = await Product.create({
       name: name,
@@ -92,8 +93,9 @@ const updateProduct = async (req, res, next) => {
     const checkIfUserExist = await User.findByPk(users_id);
     const checkIfCategoryExist = await Category.findByPk(categories_id);
 
-    if (!checkIfUserExist) throw errors.USER_NOT_FOUND(users_id);
-    if (!checkIfCategoryExist) throw errors.CATEGORY_NOT_FOUND(categories_id);
+    if (!checkIfUserExist) throw errors.NOT_FOUND("User", users_id);
+    if (!checkIfCategoryExist)
+      throw errors.NOT_FOUND("Category", categories_id);
 
     const productUpdated = await Product.update(
       {
@@ -116,7 +118,7 @@ const updateProduct = async (req, res, next) => {
         data: productUpdated,
       });
     }
-    throw errors.PRODUCT_NOT_FOUND(req.params.id);
+    throw errors.NOT_FOUND("Product", req.params.id);
   } catch (error) {
     next(error);
   }
@@ -135,7 +137,7 @@ const deleteProduct = async (req, res, next) => {
         status: `Product with id ${req.params.id} deleted successfully`,
       });
     }
-    throw errors.PRODUCT_NOT_FOUND(req.params.id);
+    throw errors.NOT_FOUND("Product", req.params.id);
   } catch (error) {
     next(error);
   }

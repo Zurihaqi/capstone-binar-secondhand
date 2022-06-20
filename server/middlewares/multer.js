@@ -6,7 +6,7 @@ const fileSizeLimitErrorHandler = (error, req, res, next) => {
       message: "File size too big. Max image size is 5MB",
     });
   }
-  next();
+  next(error);
 };
 
 const mediaStorage = multer.diskStorage({
