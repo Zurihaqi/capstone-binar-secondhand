@@ -63,7 +63,7 @@ const createProductImage = async (req, res, next) => {
     if (!checkIfProductIdExist) throw errors.PRODUCT_NOT_FOUND(products_id);
 
     const productImageCreated = await ProductImage.create({
-      image_url: req.body.uploadResult.secure_url,
+      image_url: req.body.image_url,
       products_id: products_id,
     });
 
@@ -85,7 +85,7 @@ const updateProductImage = async (req, res, next) => {
 
     const productImageUpdated = await ProductImage.update(
       {
-        image_url: req.body.uploadResult.secure_url,
+        image_url: req.body.image_url,
         products_id: products_id,
       },
       {

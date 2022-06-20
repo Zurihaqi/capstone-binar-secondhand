@@ -18,6 +18,13 @@ router.use((error, req, res, next) => {
       status: error.status,
       message: error.message,
     });
+  } else if (
+    error.message === "Cannot read properties of undefined (reading 'mimetype')"
+  ) {
+    return res.status(400).json({
+      status: "Error",
+      message: "Image cannot be empty",
+    });
   }
   return res.status(500).json({
     status: "Internal server error",

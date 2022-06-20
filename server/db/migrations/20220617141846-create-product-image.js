@@ -9,7 +9,7 @@ module.exports = {
         type: Sequelize.INTEGER,
       },
       image_url: {
-        type: Sequelize.STRING,
+        type: Sequelize.ARRAY(Sequelize.STRING),
         allowNull: false,
       },
       products_id: {
