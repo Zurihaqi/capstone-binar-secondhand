@@ -1,6 +1,4 @@
 "use strict";
-
-require("dotenv").config();
 const bcrypt = require("bcrypt");
 const { Model } = require("sequelize");
 
