@@ -15,7 +15,7 @@ const options = {
   ],
 };
 
-const getAllProductImage = async (req, res) => {
+const getAllProductImage = async (req, res, next) => {
   try {
     let { skip, row } = req.query;
 
@@ -31,20 +31,11 @@ const getAllProductImage = async (req, res) => {
       data: allProductImage,
     });
   } catch (error) {
-    if (error.code) {
-      return res.status(error.code).json({
-        status: error.status,
-        message: error.message,
-      });
-    }
-    return res.status(500).json({
-      status: "Internal server error",
-      message: error.message,
-    });
+    next(error);
   }
 };
 
-const getProductImageById = async (req, res) => {
+const getProductImageById = async (req, res, next) => {
   try {
     const foundProductImage = await ProductImage.findByPk(
       req.params.id,
@@ -58,20 +49,11 @@ const getProductImageById = async (req, res) => {
     }
     throw errors.PRODUCT_IMAGE_NOT_FOUND(req.params.id);
   } catch (error) {
-    if (error.code) {
-      return res.status(error.code).json({
-        status: error.status,
-        message: error.message,
-      });
-    }
-    return res.status(500).json({
-      status: "Internal server error",
-      message: error.message,
-    });
+    next(error);
   }
 };
 
-const createProductImage = async (req, res) => {
+const createProductImage = async (req, res, next) => {
   try {
     const { products_id } = req.body;
 
@@ -90,20 +72,11 @@ const createProductImage = async (req, res) => {
       data: productImageCreated,
     });
   } catch (error) {
-    if (error.code) {
-      return res.status(error.code).json({
-        status: error.status,
-        message: error.message,
-      });
-    }
-    return res.status(500).json({
-      status: "Internal server error",
-      message: error.message,
-    });
+    next(error);
   }
 };
 
-const updateProductImage = async (req, res) => {
+const updateProductImage = async (req, res, next) => {
   try {
     const { products_id } = req.body;
     const checkIfProductIdExist = await Product.findByPk(products_id);
@@ -130,20 +103,11 @@ const updateProductImage = async (req, res) => {
     }
     throw errors.PRODUCT_IMAGE_NOT_FOUND(req.params.id);
   } catch (error) {
-    if (error.code) {
-      return res.status(error.code).json({
-        status: error.status,
-        message: error.message,
-      });
-    }
-    return res.status(500).json({
-      status: "Internal server error",
-      message: error.message,
-    });
+    next(error);
   }
 };
 
-const deleteProductImage = async (req, res) => {
+const deleteProductImage = async (req, res, next) => {
   try {
     const productImageDeleted = await ProductImage.destroy({
       where: {
@@ -158,16 +122,7 @@ const deleteProductImage = async (req, res) => {
     }
     throw errors.PRODUCT_IMAGE_NOT_FOUND(req.params.id);
   } catch (error) {
-    if (error.code) {
-      return res.status(error.code).json({
-        status: error.status,
-        message: error.message,
-      });
-    }
-    return res.status(500).json({
-      status: "Internal server error",
-      message: error.message,
-    });
+    next(error);
   }
 };
 
