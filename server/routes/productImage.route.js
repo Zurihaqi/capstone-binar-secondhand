@@ -14,7 +14,7 @@ router.get(
 );
 router.post(
   "/",
-  multer.imageUpload.single("image_url"),
+  multer.imageUpload.array("image_url", 4),
   multer.fileSizeLimitErrorHandler,
   validation.createProductImage(),
   validate,
@@ -23,7 +23,7 @@ router.post(
 );
 router.patch(
   "/:id",
-  multer.imageUpload.single("image_url"),
+  multer.imageUpload.array("image_url", 4),
   multer.fileSizeLimitErrorHandler,
   validation.updateProductImage(),
   validate,
