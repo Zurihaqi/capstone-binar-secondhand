@@ -1,4 +1,5 @@
 const { City } = require("../db/models");
+const errors = require("../misc/errors");
 
 module.exports = {
   getAllCities: async (req, res) => {
@@ -43,11 +44,7 @@ module.exports = {
         });
       }
       //! city tidak ditemukan
-      throw {
-        code: 404,
-        status: "Not Found",
-        message: `City with id ${req.params.id} Not Found`,
-      };
+      throw errors.NOT_FOUND("City", id);
     } catch (error) {
       //! error dengan status code
       if (error.code) {
