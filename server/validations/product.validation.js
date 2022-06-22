@@ -6,13 +6,9 @@ const getProductById = () => [
 
 const createProduct = () => [
   body("name")
-    .isAlphanumeric("en-US", { ignore: " " })
-    .notEmpty()
-    .withMessage("Product name cannot be empty"),
-  body("price")
-    .isNumeric()
-    .notEmpty()
-    .withMessage("Price can only contain numbers"),
+    .isLength({ min: 3 })
+    .withMessage("Product name must be at least 3 characters long"),
+  body("price").isNumeric().withMessage("Price can only contain numbers"),
   body("description").notEmpty().withMessage("description cannot be empty"),
   body("users_id").notEmpty().withMessage("users_id cannot be empty"),
   body("categories_id").notEmpty().withMessage("categories_id cannot be empty"),
@@ -20,16 +16,13 @@ const createProduct = () => [
 
 const updateProduct = () => [
   body("name")
-    .isAlphanumeric("en-US", { ignore: " " })
-    .notEmpty()
-    .withMessage("Product name cannot be empty"),
-  body("price")
+    .isLength({ min: 3 })
+    .withMessage("Product name must be at least 3 characters long"),
+  body("price").isNumeric().withMessage("Price can only contain numbers"),
+  body("users_id").isNumeric().withMessage("users_id can only contain numbers"),
+  body("categories_id")
     .isNumeric()
-    .notEmpty()
-    .withMessage("Price can only contain numbers"),
-  body("description").notEmpty().withMessage("description cannot be empty"),
-  body("users_id").notEmpty().withMessage("users_id cannot be empty"),
-  body("categories_id").notEmpty().withMessage("categories_id cannot be empty"),
+    .withMessage("categories_id can only contain numbers"),
   param("id").notEmpty().withMessage("id cannot be empty"),
 ];
 

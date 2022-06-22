@@ -55,7 +55,8 @@ const createProductImage = async (req, res, next) => {
     //Cek apakah products_id ada dalam database sebelum membuat product image
     const checkIfProductIdExist = await Product.findByPk(products_id);
 
-    if (!checkIfProductIdExist) throw errors.NOT_FOUND("Product", products_id);
+    if (!checkIfProductIdExist)
+      throw errors.NOT_FOUND("Product image", products_id);
 
     const productImageCreated = await ProductImage.create({
       image_url: req.body.image_url,
@@ -64,7 +65,7 @@ const createProductImage = async (req, res, next) => {
 
     return res
       .status(200)
-      .json(successMsg.CREATE_SUCCESS("Product", productImageCreated));
+      .json(successMsg.CREATE_SUCCESS("Product image", productImageCreated));
   } catch (error) {
     next(error);
   }
@@ -75,7 +76,8 @@ const updateProductImage = async (req, res, next) => {
     const { products_id } = req.body;
     const checkIfProductIdExist = await Product.findByPk(products_id);
 
-    if (!checkIfProductIdExist) throw errors.NOT_FOUND("Product", products_id);
+    if (!checkIfProductIdExist)
+      throw errors.NOT_FOUND("Product image", products_id);
 
     const productImageUpdated = await ProductImage.update(
       {
