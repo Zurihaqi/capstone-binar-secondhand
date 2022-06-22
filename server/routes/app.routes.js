@@ -5,6 +5,7 @@ const categoryRoutes = require("./category.route");
 const authRoutes = require("./auth.route");
 const cityRoutes = require("./city.route");
 const wishlistRoutes = require("./wishlist.route");
+const notificationsRoutes = require("./notification.route");
 
 const errorRoutes = require("./error.route");
 
@@ -14,6 +15,7 @@ router.use("/product-images", productImageRoutes);
 router.use("/cities", cityRoutes);
 router.use("/category", categoryRoutes);
 router.use("/wishlists", wishlistRoutes);
+router.use("/notifications", notificationsRoutes);
 
 //error handlers
 router.use((error, req, res, next) => errorRoutes(error, req, res, next));
