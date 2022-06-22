@@ -11,7 +11,10 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       // define association here
       Tender.belongsTo(models.User, {
-        foreignKey: "users_id",
+        foreignKey: "buyer_id",
+      });
+      Tender.belongsTo(models.User, {
+        foreignKey: "seller_id",
       });
       Tender.belongsTo(models.Product, {
         foreignKey: "products_id",
@@ -22,15 +25,13 @@ module.exports = (sequelize, DataTypes) => {
     {
       offer_status: DataTypes.STRING,
       price: DataTypes.INTEGER,
-      users_id: DataTypes.INTEGER,
+      seller_id: DataTypes.INTEGER,
+      buyer_id: DataTypes.INTEGER,
       products_id: DataTypes.INTEGER,
     },
     {
       sequelize,
       modelName: "Tender",
-      tableName: "tenders",
-      createdAt: "created_at",
-      updatedAt: "updated_at",
     }
   );
   return Tender;
