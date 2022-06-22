@@ -1,5 +1,6 @@
 const { ProductImage, Product } = require("../db/models");
 const errors = require("../misc/errors");
+const successMsg = require("../misc/successMessages");
 
 const options = {
   attributes: {
@@ -24,12 +25,9 @@ const getAllProductImage = async (req, res, next) => {
 
     const allProductImage = await ProductImage.findAll(options);
     if (allProductImage[0] == null) {
-      throw errors.EMPTY_TABLE;
+      throw errors.EMPTY_TABLE("Product image");
     }
-    return res.status(200).json({
-      status: "Success",
-      data: allProductImage,
-    });
+    return res.status(200).json(successMsg.GET_SUCCESS(allProductImage));
   } catch (error) {
     next(error);
   }
@@ -42,10 +40,7 @@ const getProductImageById = async (req, res, next) => {
       options
     );
     if (foundProductImage) {
-      return res.status(200).json({
-        status: "Success",
-        data: foundProductImage,
-      });
+      return res.status(200).json(successMsg.GET_SUCCESS(foundProductImage));
     }
     throw errors.NOT_FOUND("Product image", req.params.id);
   } catch (error) {
@@ -67,10 +62,9 @@ const createProductImage = async (req, res, next) => {
       products_id: products_id,
     });
 
-    return res.status(200).json({
-      status: "ProductImage created successfully",
-      data: productImageCreated,
-    });
+    return res
+      .status(200)
+      .json(successMsg.CREATE_SUCCESS("Product", productImageCreated));
   } catch (error) {
     next(error);
   }
@@ -96,10 +90,15 @@ const updateProductImage = async (req, res, next) => {
     );
 
     if (productImageUpdated) {
-      return res.status(200).json({
-        status: "ProductImage updated successfully",
-        data: productImageUpdated,
-      });
+      return res
+        .status(200)
+        .json(
+          successMsg.UPDATE_SUCCESS(
+            "Product image",
+            req.params.id,
+            productImageUpdated
+          )
+        );
     }
     throw errors.NOT_FOUND("Product image", req.params.id);
   } catch (error) {
@@ -116,9 +115,9 @@ const deleteProductImage = async (req, res, next) => {
     });
 
     if (productImageDeleted) {
-      return res.status(200).json({
-        status: `ProductImage with id ${req.params.id} deleted successfully`,
-      });
+      return res
+        .status(200)
+        .json(successMsg.DELETE_SUCCESS("Product image", req.params.id));
     }
     throw errors.NOT_FOUND("Product image", req.params.id);
   } catch (error) {
