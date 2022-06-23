@@ -19,9 +19,6 @@ module.exports = (sequelize, DataTypes) => {
     {
       sequelize,
       modelName: "City",
-      // tableName: "cities",
-      // createdAt: "created_at",
-      // updatedAt: "updated_at",
     }
   );
 

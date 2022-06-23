@@ -1,66 +1,32 @@
 const { City } = require("../db/models");
+const errors = require("../misc/errors");
+const success = require("../misc/success");
 
 module.exports = {
-  getAllCities: async (req, res) => {
+  getAllCities: async (req, res, next) => {
     console.log(City);
     try {
       //? Get semua cities
       const cities = await City.findAll();
       if (cities) {
-        return res.status(200).json({
-          status: "Success",
-          data: cities,
-        });
+        return success.GET_SUCCESS(res, cities);
       }
-      throw {
-        code: 404,
-        status: "Not Found",
-        message: "Cities is Empty",
-      };
+      throw errors.EMPTY_TABLE("Cities");
     } catch (error) {
-      //! error dengan status code
-      if (error.code) {
-        return res.status(error.code).json({
-          status: error.status,
-          message: error.message,
-        });
-      }
-      //! error dari request
-      return res.status(500).json({
-        status: "Internal server error",
-        message: error.message,
-      });
+      next(error);
     }
   },
-  getSpecificCity: async (req, res) => {
+  getSpecificCity: async (req, res, next) => {
     try {
       const { id } = req.params;
       const city = await City.findByPk(id);
       if (city) {
-        return res.status(200).json({
-          status: "Success",
-          data: city,
-        });
+        return success.GET_SUCCESS(res, city);
       }
       //! city tidak ditemukan
-      throw {
-        code: 404,
-        status: "Not Found",
-        message: `City with id ${req.params.id} Not Found`,
-      };
+      throw errors.NOT_FOUND("City", id);
     } catch (error) {
-      //! error dengan status code
-      if (error.code) {
-        return res.status(error.code).json({
-          status: error.status,
-          message: error.message,
-        });
-      }
-      //! error dari request
-      return res.status(500).json({
-        status: "Internal server error",
-        message: error.message,
-      });
+      next(error);
     }
   },
 };
