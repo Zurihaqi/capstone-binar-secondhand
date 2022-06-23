@@ -6,6 +6,9 @@ const authRoutes = require("./auth.route");
 const cityRoutes = require("./city.route");
 const tenderRoutes = require("./tender.route");
 const wishlistRoutes = require("./wishlist.route");
+const notificationsRoutes = require("./notification.route");
+
+const errorRoutes = require("./error.route");
 
 router.use("/login", authRoutes);
 router.use("/products", productRoutes);
@@ -14,27 +17,10 @@ router.use("/cities", cityRoutes);
 router.use("/tenders", tenderRoutes);
 router.use("/category", categoryRoutes);
 router.use("/wishlists", wishlistRoutes);
+router.use("/notifications", notificationsRoutes);
 
 //error handlers
-router.use((error, req, res, next) => {
-  if (error.code) {
-    return res.status(error.code).json({
-      status: error.status,
-      message: error.message,
-    });
-  } else if (
-    error.message === "Cannot read properties of undefined (reading 'mimetype')"
-  ) {
-    return res.status(400).json({
-      status: "Error",
-      message: "Image cannot be empty",
-    });
-  }
-  return res.status(500).json({
-    status: "Internal server error",
-    message: error.message,
-  });
-});
+router.use((error, req, res, next) => errorRoutes(error, req, res, next));
 
 //page not found handler, selalu tempatkan di paling bawah
 router.use((req, res) => {
