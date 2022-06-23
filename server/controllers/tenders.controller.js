@@ -22,7 +22,7 @@ const options = {
 };
 
 module.exports = {
-  addTender: async (req, res) => {
+  addTender: async (req, res, next) => {
     try {
       const { offer_status, price, buyer_id, seller_id, products_id } =
         req.body;
@@ -60,44 +60,46 @@ module.exports = {
       next(error);
     }
   },
-  updateTender: async (req, res) => {
+  updateTender: async (req, res, next) => {
     try {
+      const { id } = req.params;
       const { offer_status, price, buyer_id, seller_id, products_id } =
         req.body;
-      const { id } = req.params;
 
-      //? Cek ketersediaan
-      const buyerExist = await User.findByPk(buyer_id);
-      const sellerExist = await User.findByPk(seller_id);
-      const productExist = await Product.findByPk(products_id);
+      if (offer_status && price && buyer_id && seller_id && products_id) {
+        //? Cek ketersediaan
+        const buyerExist = await User.findByPk(buyer_id);
+        const sellerExist = await User.findByPk(seller_id);
+        const productExist = await Product.findByPk(products_id);
 
-      //! Cek Error
-      if (!buyerExist) throw errors.NOT_FOUND("Buyer", buyer_id);
-      if (!sellerExist) throw errors.NOT_FOUND("seller", seller_id);
-      if (!productExist) throw errors.NOT_FOUND("Product", products_id);
+        //! Cek Error
+        if (!buyerExist) throw errors.NOT_FOUND("Buyer", buyer_id);
+        if (!sellerExist) throw errors.NOT_FOUND("seller", seller_id);
+        if (!productExist) throw errors.NOT_FOUND("Product", products_id);
 
-      const tender = await Tender.update(
-        {
-          offer_status: offer_status,
-          price: price,
-          buyer_id: buyer_id,
-          seller_id: seller_id,
-          products_id: products_id,
-        },
-        { where: { id: id } }
-      );
-      if (tender) {
-        return res.status(201).json({
-          status: "Tender created successfully",
-          data: tender,
-        });
+        const tender = await Tender.update(
+          {
+            offer_status: offer_status,
+            price: price,
+            buyer_id: buyer_id,
+            seller_id: seller_id,
+            products_id: products_id,
+          },
+          { where: { id: id } }
+        );
+        if (tender) {
+          return res.status(201).json({
+            status: "Tender created successfully",
+            data: tender,
+          });
+        }
       }
       throw errors.NOT_FOUND("Tender", id);
     } catch (error) {
       next(error);
     }
   },
-  getAllTenders: async (req, res) => {
+  getAllTenders: async (req, res, next) => {
     try {
       const tenders = await Tender.findAll(options);
       if (tenders) {
@@ -115,7 +117,7 @@ module.exports = {
       next(error);
     }
   },
-  getTenderById: async (req, res) => {
+  getTenderById: async (req, res, next) => {
     try {
       const { id } = req.params;
       const tender = await Tender.findByPk(id, options);
@@ -130,7 +132,7 @@ module.exports = {
       next(error);
     }
   },
-  deleteTenderById: async (req, res) => {
+  deleteTenderById: async (req, res, next) => {
     try {
       const { id } = req.params;
       const deletedTender = await Tender.findByPk(id, options);
