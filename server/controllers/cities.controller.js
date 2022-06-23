@@ -1,5 +1,6 @@
 const { City } = require("../db/models");
 const errors = require("../misc/errors");
+const success = require("../misc/success");
 
 module.exports = {
   getAllCities: async (req, res, next) => {
@@ -8,16 +9,9 @@ module.exports = {
       //? Get semua cities
       const cities = await City.findAll();
       if (cities) {
-        return res.status(200).json({
-          status: "Success",
-          data: cities,
-        });
+        return success.GET_SUCCESS(res, cities);
       }
-      throw {
-        code: 404,
-        status: "Not Found",
-        message: "Cities is Empty",
-      };
+      throw errors.EMPTY_TABLE("Cities");
     } catch (error) {
       next(error);
     }
@@ -27,10 +21,7 @@ module.exports = {
       const { id } = req.params;
       const city = await City.findByPk(id);
       if (city) {
-        return res.status(200).json({
-          status: "Success",
-          data: city,
-        });
+        return success.GET_SUCCESS(res, city);
       }
       //! city tidak ditemukan
       throw errors.NOT_FOUND("City", id);

@@ -1,5 +1,6 @@
 const { Tender, Product, User } = require("../db/models");
 const errors = require("../misc/errors");
+const success = require("../misc/success");
 
 const options = {
   attributes: {
@@ -52,10 +53,7 @@ module.exports = {
         seller_id: seller_id,
         products_id: products_id,
       });
-      return res.status(201).json({
-        status: "Tender created successfully",
-        data: tender,
-      });
+      return success.CREATE_SUCCESS(res, "Tender", tender);
     } catch (error) {
       next(error);
     }
@@ -88,10 +86,7 @@ module.exports = {
           { where: { id: id } }
         );
         if (tender) {
-          return res.status(201).json({
-            status: "Tender created successfully",
-            data: tender,
-          });
+          return success.UPDATE_SUCCESS(res, "Tender", id, tender);
         }
       }
       throw errors.NOT_FOUND("Tender", id);
@@ -103,16 +98,9 @@ module.exports = {
     try {
       const tenders = await Tender.findAll(options);
       if (tenders) {
-        return res.status(200).json({
-          status: "Success",
-          data: tenders,
-        });
+        return success.GET_SUCCESS(res, tenders);
       }
-      throw {
-        code: 404,
-        status: "Not Found",
-        message: "You not have Tender",
-      };
+      throw errors.EMPTY_TABLE("Tender");
     } catch (error) {
       next(error);
     }
@@ -122,10 +110,7 @@ module.exports = {
       const { id } = req.params;
       const tender = await Tender.findByPk(id, options);
       if (tender) {
-        return res.status(200).json({
-          status: "Success",
-          data: tender,
-        });
+        return success.GET_SUCCESS(res, tender);
       }
       throw errors.NOT_FOUND("Tender", id);
     } catch (error) {
@@ -137,9 +122,7 @@ module.exports = {
       const { id } = req.params;
       const deletedTender = await Tender.findByPk(id, options);
       if (deletedTender) {
-        return res.status(200).json({
-          status: `Tender with ID ${id} deleted successfully`,
-        });
+        return success.DELETE_SUCCESS(res, "Tender", id);
       }
       throw errors.NOT_FOUND("Tender", id);
     } catch (error) {
