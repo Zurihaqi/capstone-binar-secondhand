@@ -4,6 +4,7 @@ const productImageRoutes = require("./productImage.route");
 const categoryRoutes = require("./category.route");
 const authRoutes = require("./auth.route");
 const cityRoutes = require("./city.route");
+const tenderRoutes = require("./tender.route");
 const wishlistRoutes = require("./wishlist.route");
 const notificationsRoutes = require("./notification.route");
 
@@ -13,6 +14,7 @@ router.use("/login", authRoutes);
 router.use("/products", productRoutes);
 router.use("/product-images", productImageRoutes);
 router.use("/cities", cityRoutes);
+router.use("/tenders", tenderRoutes);
 router.use("/category", categoryRoutes);
 router.use("/wishlists", wishlistRoutes);
 router.use("/notifications", notificationsRoutes);

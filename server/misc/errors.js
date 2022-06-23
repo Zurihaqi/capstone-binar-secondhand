@@ -8,6 +8,18 @@ class apiError extends Error {
 
 module.exports = {
   //pesan-pesan error, tambah sesuai kebutuhan
+  EMPTY_LIST: (table) => {
+    const error = new apiError(404, "Empty data", `${table} is empty`);
+    return error;
+  },
+  AVAILABLE_DATA: (table, id) => {
+    const error = new apiError(
+      403,
+      "Data already exist",
+      `Data exist at ${table} ID ${id}`
+    );
+    return error;
+  },
   EMPTY_TABLE: (table) => {
     const error = new apiError(404, "Data empty", `${table} is empty`);
     return error;

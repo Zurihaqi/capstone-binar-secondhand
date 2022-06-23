@@ -16,7 +16,18 @@ module.exports = {
         type: Sequelize.INTEGER,
         allowNull: false,
       },
-      users_id: {
+      seller_id: {
+        type: Sequelize.DataTypes.INTEGER,
+        references: {
+          model: {
+            tableName: "Users",
+          },
+          key: "id",
+        },
+        allowNull: false,
+        unique: true,
+      },
+      buyer_id: {
         type: Sequelize.DataTypes.INTEGER,
         references: {
           model: {

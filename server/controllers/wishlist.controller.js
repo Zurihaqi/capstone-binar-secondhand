@@ -1,6 +1,6 @@
 const { Wishlist, User, Product } = require("../db/models");
 const errors = require("../misc/errors");
-const successMsg = require("../misc/successMessages");
+const successMsg = require("../misc/success");
 
 const options = {
   attributes: {
