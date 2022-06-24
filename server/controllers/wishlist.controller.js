@@ -32,9 +32,9 @@ const getAllWishlist = async (req, res, next) => {
     const allWishlist = await Wishlist.findAll(options);
 
     if (allWishlist[0] == null) {
-      throw errors.EMPTY_TABLE;
+      throw errors.EMPTY_TABLE("Wishlist");
     }
-    return res.status(200).json(successMsg.GET_SUCCESS(allWishlist));
+    return successMsg.GET_SUCCESS(res, allWishlist);
   } catch (error) {
     next(error);
   }
@@ -44,7 +44,7 @@ const getWishlistById = async (req, res, next) => {
   try {
     const foundWishlist = await Wishlist.findByPk(req.params.id, options);
     if (foundWishlist) {
-      return res.status(200).json(successMsg.GET_SUCCESS(foundWishlist));
+      return successMsg.GET_SUCCESS(res, foundWishlist);
     }
     throw errors.NOT_FOUND("Wishlist", req.params.id);
   } catch (error) {
@@ -66,9 +66,7 @@ const createWishlist = async (req, res, next) => {
       products_id: products_id,
     });
 
-    return res
-      .status(200)
-      .json(successMsg.CREATE_SUCCESS("Wishlist", wishlistCreated));
+    return successMsg.CREATE_SUCCESS(res, "Wishlist", wishlistCreated);
   } catch (error) {
     next(error);
   }
@@ -92,15 +90,17 @@ const updateWishlist = async (req, res, next) => {
         where: {
           id: req.params.id,
         },
+        returning: true,
       }
     );
 
     if (wishlistUpdated) {
-      return res
-        .status(200)
-        .json(
-          successMsg.UPDATE_SUCCESS("Wishlist", req.params.id, wishlistUpdated)
-        );
+      return successMsg.UPDATE_SUCCESS(
+        res,
+        "Wishlist",
+        req.params.id,
+        wishlistUpdated
+      );
     }
     throw errors.NOT_FOUND("Wishlist", req.params.id);
   } catch (error) {
@@ -115,9 +115,7 @@ const deleteWishlist = async (req, res, next) => {
     });
 
     if (wishlistDeleted) {
-      return res
-        .status(200)
-        .json(successMsg.DELETE_SUCCESS("Wishlist", req.params.id));
+      return successMsg.DELETE_SUCCESS(res, "Wishlist", req.params.id);
     }
     throw errors.NOT_FOUND("Wishlist", req.params.id);
   } catch (error) {

@@ -7,6 +7,7 @@ const cityRoutes = require("./city.route");
 const tenderRoutes = require("./tender.route");
 const wishlistRoutes = require("./wishlist.route");
 const notificationsRoutes = require("./notification.route");
+const transactionRoutes = require("./transaction.route");
 
 const errorRoutes = require("./error.route");
 
@@ -18,6 +19,7 @@ router.use("/tenders", tenderRoutes);
 router.use("/category", categoryRoutes);
 router.use("/wishlists", wishlistRoutes);
 router.use("/notifications", notificationsRoutes);
+router.use("/transactions", transactionRoutes);
 
 //error handlers
 router.use((error, req, res, next) => errorRoutes(error, req, res, next));

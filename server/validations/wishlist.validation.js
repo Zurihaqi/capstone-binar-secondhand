@@ -10,8 +10,10 @@ const create = () => [
 ];
 
 const update = () => [
-  body("users_id").notEmpty().withMessage("users_id cannot be empty"),
-  body("products_id").notEmpty().withMessage("products_id cannot be empty"),
+  body("users_id").isNumeric().withMessage("users_id can only contain numbers"),
+  body("products_id")
+    .isNumeric()
+    .withMessage("products_id can only contain numbers"),
   param("id").notEmpty().withMessage("id cannot be empty"),
 ];
 
