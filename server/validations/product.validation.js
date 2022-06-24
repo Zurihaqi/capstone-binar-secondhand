@@ -15,10 +15,6 @@ const createProduct = () => [
 ];
 
 const updateProduct = () => [
-  body("name")
-    .isLength({ min: 3 })
-    .withMessage("Product name must be at least 3 characters long"),
-  body("price").isNumeric().withMessage("Price can only contain numbers"),
   body("users_id").isNumeric().withMessage("users_id can only contain numbers"),
   body("categories_id")
     .isNumeric()

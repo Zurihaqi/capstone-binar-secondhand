@@ -16,12 +16,18 @@ const errorMessages = (error, req, res, next) => {
       status: "Sequelize validation error",
       message: error.errors.map((e) => e.message),
     });
+  } else if (error.name === "SequelizeForeignKeyConstraintError") {
+    return res.status(401).json({
+      status: "Unauthorized",
+      message: error.message,
+      detail: error.parent.detail,
+    });
   }
+
+  //Internal server error
   const errStack = error.stack.split("\n");
   errStack.shift();
-  const errLocation = errStack.map((e) => {
-    return e.trim();
-  });
+  const errLocation = errStack.map((e) => e.trim());
   return res.status(500).json({
     status: "Internal server error",
     message: error.message,

@@ -27,7 +27,7 @@ const getAllProductImage = async (req, res, next) => {
     if (allProductImage[0] == null) {
       throw errors.EMPTY_TABLE("Product image");
     }
-    return res.status(200).json(successMsg.GET_SUCCESS(allProductImage));
+    return successMsg.GET_SUCCESS(res, allProductImage);
   } catch (error) {
     next(error);
   }
@@ -40,7 +40,7 @@ const getProductImageById = async (req, res, next) => {
       options
     );
     if (foundProductImage) {
-      return res.status(200).json(successMsg.GET_SUCCESS(foundProductImage));
+      return successMsg.GET_SUCCESS(res, foundProductImage);
     }
     throw errors.NOT_FOUND("Product image", req.params.id);
   } catch (error) {
@@ -63,9 +63,7 @@ const createProductImage = async (req, res, next) => {
       products_id: products_id,
     });
 
-    return res
-      .status(200)
-      .json(successMsg.CREATE_SUCCESS("Product image", productImageCreated));
+    return successMsg.CREATE_SUCCESS(res, "Product image", productImageCreated);
   } catch (error) {
     next(error);
   }
@@ -88,19 +86,17 @@ const updateProductImage = async (req, res, next) => {
         where: {
           id: req.params.id,
         },
+        returning: true,
       }
     );
 
     if (productImageUpdated) {
-      return res
-        .status(200)
-        .json(
-          successMsg.UPDATE_SUCCESS(
-            "Product image",
-            req.params.id,
-            productImageUpdated
-          )
-        );
+      return successMsg.UPDATE_SUCCESS(
+        res,
+        "Product image",
+        req.params.id,
+        productImageUpdated
+      );
     }
     throw errors.NOT_FOUND("Product image", req.params.id);
   } catch (error) {
@@ -117,9 +113,7 @@ const deleteProductImage = async (req, res, next) => {
     });
 
     if (productImageDeleted) {
-      return res
-        .status(200)
-        .json(successMsg.DELETE_SUCCESS("Product image", req.params.id));
+      return successMsg.DELETE_SUCCESS(res, "Product image", req.params.id);
     }
     throw errors.NOT_FOUND("Product image", req.params.id);
   } catch (error) {
