@@ -1,72 +1,58 @@
 const { User } = require("../db/models");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const { JWT_SECRET, SALT_ROUNDS } = process.env;
+const errors = require("../misc/errors");
+const success = require("../misc/success");
 
 module.exports = {
-  signin: async (req, res, next) => {
+  signIn: async (req, res, next) => {
     try {
       const { email, password } = req.body;
-
-      const checkUser = await User.findOne({ where: { email: email } });
-
-      if (checkUser) {
-        const checkPassword = bcrypt.compareSync(password, checkUser.password);
-
-        if (checkPassword) {
-          const token = jwt.sign(
-            {
-              id: checkUser.id,
-              name: checkUser.name,
-              email: checkUser.email,
-              photo_profile: checkUser.photo_profile,
-            },
-            "secretkey"
-          );
-
-          res.status(200).json({
-            message: "Login berhasil",
-            data: token,
-          });
-        } else {
-          res.status(404).json({
-            message: "Password pengguna salah",
-          });
-        }
-      } else {
-        res.status(404).json({
-          message: "Email pengguna tidak ditemukan",
-        });
+      const userRegistered = await User.findOne({
+        where: { email: email },
+      });
+      if (!userRegistered) throw errors.NOT_REGISTERED(email);
+      const validPassword = bcrypt.compareSync(
+        password,
+        userRegistered.password
+      );
+      if (validPassword) {
+        const payload = {
+          id: userRegistered.id,
+          name: userRegistered.name,
+          email: userRegistered.email,
+          photo_profile: userRegistered.photo_profile,
+          phone: userRegistered.phone,
+          address: userRegistered.address,
+          city: userRegistered.cities_id,
+        };
+        const token = jwt.sign(payload, JWT_SECRET, { expiresIn: "1h" });
+        return success.LOGIN_SUCCESS(res, token);
       }
+      throw errors.INVALID_CRED;
     } catch (error) {
-      console.log(error);
       next(error);
     }
   },
-  signup: async (req, res, next) => {
+  signUp: async (req, res, next) => {
     try {
-      const { name, email, password, confirmPassword } = req.body;
-
-      if (password !== confirmPassword) {
-        res.status(403).json({ message: "Password tidak cocok" });
-      }
-
+      const { name, email, password } = req.body;
       const checkEmail = await User.findOne({ where: { email: email } });
       if (checkEmail) {
-        return res.status(403).json({ message: "Email sudah terdaftar" });
+        throw errors.EMAIL_REGISTERED(email);
       }
-      const user = await User.create({
-        name,
-        email,
-        password: bcrypt.hashSync(password, 10),
-        role: "admin",
+      const userCreated = await User.create({
+        name: name,
+        email: email,
+        password: password,
       });
-      delete user.dataValues.password;
-      res.status(201).json({
-        message: "Berhasil mendaftar",
-        data: user,
-      });
+      if (userCreated) {
+        const data = { name: userCreated.name, email: userCreated.email };
+        return success.REGISTER_SUCCESS(res, data);
+      }
     } catch (error) {
-      next(err);
+      next(error);
     }
   },
 };

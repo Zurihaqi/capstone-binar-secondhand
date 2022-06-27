@@ -23,15 +23,15 @@ module.exports = {
       },
       photo_profile: {
         type: Sequelize.STRING,
-        allowNull: false,
+        allowNull: true,
       },
       phone: {
         type: Sequelize.STRING,
-        allowNull: false,
+        allowNull: true,
       },
       address: {
         type: Sequelize.STRING,
-        allowNull: false,
+        allowNull: true,
       },
       cities_id: {
         type: Sequelize.DataTypes.INTEGER,
@@ -41,7 +41,7 @@ module.exports = {
           },
           key: "id",
         },
-        allowNull: false,
+        allowNull: true,
         unique: true,
       },
       createdAt: {
