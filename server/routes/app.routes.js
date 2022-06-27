@@ -1,8 +1,9 @@
 const router = require("express").Router();
+const { login, register } = require("./auth.route");
+const authentication = require("../middlewares/passport");
 const productRoutes = require("./product.route");
 const productImageRoutes = require("./productImage.route");
 const categoryRoutes = require("./category.route");
-const authRoutes = require("./auth.route");
 const cityRoutes = require("./city.route");
 const tenderRoutes = require("./tender.route");
 const wishlistRoutes = require("./wishlist.route");
@@ -11,7 +12,10 @@ const transactionRoutes = require("./transaction.route");
 
 const errorRoutes = require("./error.route");
 
-router.use("/login", authRoutes);
+router.use(register);
+router.use(login);
+router.use(authentication);
+
 router.use("/products", productRoutes);
 router.use("/product-images", productImageRoutes);
 router.use("/cities", cityRoutes);
