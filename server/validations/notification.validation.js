@@ -5,19 +5,19 @@ const getById = () => [
 ];
 
 const create = () => [
+  body("title").notEmpty().withMessage("title cannot be empty"),
+  body("description").notEmpty().withMessage("description cannot be empty"),
   body("users_id").notEmpty().withMessage("users_id cannot be empty"),
   body("products_id").notEmpty().withMessage("products_id cannot be empty"),
 ];
 
 const update = () => [
-  body("users_id").isNumeric().withMessage("users_id can only contain numbers"),
-  body("products_id")
-    .isNumeric()
-    .withMessage("products_id can only contain numbers"),
+  body("users_id").notEmpty().withMessage("users_id cannot be empty"),
+  body("products_id").notEmpty().withMessage("products_id cannot be empty"),
   param("id").notEmpty().withMessage("id cannot be empty"),
 ];
 
-const deleteWishlist = () => [
+const deleteNotification = () => [
   param("id").notEmpty().withMessage("id cannot be empty"),
 ];
 
@@ -25,5 +25,5 @@ module.exports = {
   getById,
   create,
   update,
-  deleteWishlist,
+  deleteNotification,
 };

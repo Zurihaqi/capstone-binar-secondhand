@@ -1,5 +1,6 @@
-const { Product, User, Category } = require("../db/models/");
+const { Product, User, Category, City } = require("../db/models/");
 const errors = require("../misc/errors");
+const successMsg = require("../misc/success");
 
 const options = {
   attributes: {
@@ -17,6 +18,14 @@ const options = {
       attributes: {
         exclude: ["password", "createdAt", "updatedAt"],
       },
+      include: [
+        {
+          model: City,
+          attributes: {
+            exclude: ["createdAt", "updatedAt"],
+          },
+        },
+      ],
     },
   ],
 };
@@ -32,12 +41,9 @@ const getAllProducts = async (req, res, next) => {
     const allProducts = await Product.findAll(options);
     //error handler ketika tabel kosong
     if (allProducts[0] == null) {
-      throw errors.EMPTY_TABLE;
+      throw errors.EMPTY_TABLE("Product");
     }
-    return res.status(200).json({
-      status: "Success",
-      data: allProducts,
-    });
+    return successMsg.GET_SUCCESS(res, allProducts);
   } catch (error) {
     next(error);
   }
@@ -47,10 +53,7 @@ const getProductById = async (req, res, next) => {
   try {
     const foundProduct = await Product.findByPk(req.params.id, options);
     if (foundProduct) {
-      return res.status(200).json({
-        status: "Success",
-        data: foundProduct,
-      });
+      return successMsg.GET_SUCCESS(res, foundProduct);
     }
     throw errors.NOT_FOUND("Product", req.params.id);
   } catch (error) {
@@ -77,11 +80,7 @@ const createProduct = async (req, res, next) => {
       users_id: users_id,
       categories_id: categories_id,
     });
-
-    return res.status(200).json({
-      status: "Product created successfully",
-      data: productCreated,
-    });
+    return successMsg.CREATE_SUCCESS(res, "Product", productCreated);
   } catch (error) {
     next(error);
   }
@@ -109,14 +108,17 @@ const updateProduct = async (req, res, next) => {
         where: {
           id: req.params.id,
         },
+        returning: true,
       }
     );
 
     if (productUpdated) {
-      return res.status(200).json({
-        status: "Product updated successfully",
-        data: productUpdated,
-      });
+      return successMsg.UPDATE_SUCCESS(
+        res,
+        "Product",
+        req.params.id,
+        productUpdated
+      );
     }
     throw errors.NOT_FOUND("Product", req.params.id);
   } catch (error) {
@@ -133,9 +135,7 @@ const deleteProduct = async (req, res, next) => {
     });
 
     if (productDeleted) {
-      return res.status(200).json({
-        status: `Product with id ${req.params.id} deleted successfully`,
-      });
+      return successMsg.DELETE_SUCCESS(res, "Product", req.params.id);
     }
     throw errors.NOT_FOUND("Product", req.params.id);
   } catch (error) {

@@ -8,7 +8,18 @@ class apiError extends Error {
 
 module.exports = {
   //pesan-pesan error, tambah sesuai kebutuhan
-  EMPTY_TABLE: new apiError(404, "Not found", "Table is empty"),
+  AVAILABLE_DATA: (table, id) => {
+    const error = new apiError(
+      403,
+      "Data already exist",
+      `Data exist at ${table} ID ${id}`
+    );
+    return error;
+  },
+  EMPTY_TABLE: (table) => {
+    const error = new apiError(404, "Data empty", `${table} is empty`);
+    return error;
+  },
   NOT_FOUND: (table, id) => {
     const error = new apiError(
       404, //code
@@ -17,4 +28,14 @@ module.exports = {
     );
     return error;
   },
+  NOT_REGISTERED: (email) => {
+    const error = new apiError(404, "Not found", `${email} is not registered`);
+    return error;
+  },
+  EMAIL_REGISTERED: (email) => {
+    const error = new apiError(403, "Error", `${email} is already registered`);
+    return error;
+  },
+  INVALID_CRED: new apiError(401, "Error", "Email or password is wrong"),
+  UNAUTHORIZED: new apiError(401, "Unauthorized", "Login to use this API"),
 };

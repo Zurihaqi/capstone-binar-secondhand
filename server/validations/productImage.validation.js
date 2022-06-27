@@ -5,11 +5,15 @@ const getProductImageById = () => [
 ];
 
 const createProductImage = () => [
-  body("products_id").notEmpty().withMessage("products_id cannot be empty"),
+  body("products_id")
+    .isNumeric()
+    .withMessage("products_id can only contain numbers"),
 ];
 
 const updateProductImage = () => [
-  body("products_id").notEmpty().withMessage("products_id cannot be empty"),
+  body("products_id")
+    .isNumeric()
+    .withMessage("products_id can only contain numbers"),
   param("id").notEmpty().withMessage("id cannot be empty"),
 ];
 

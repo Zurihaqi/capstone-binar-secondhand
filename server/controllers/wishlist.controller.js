@@ -1,5 +1,6 @@
 const { Wishlist, User, Product } = require("../db/models");
 const errors = require("../misc/errors");
+const successMsg = require("../misc/success");
 
 const options = {
   attributes: {
@@ -31,12 +32,9 @@ const getAllWishlist = async (req, res, next) => {
     const allWishlist = await Wishlist.findAll(options);
 
     if (allWishlist[0] == null) {
-      throw errors.EMPTY_TABLE;
+      throw errors.EMPTY_TABLE("Wishlist");
     }
-    return res.status(200).json({
-      status: "Successs",
-      data: allWishlist,
-    });
+    return successMsg.GET_SUCCESS(res, allWishlist);
   } catch (error) {
     next(error);
   }
@@ -46,10 +44,7 @@ const getWishlistById = async (req, res, next) => {
   try {
     const foundWishlist = await Wishlist.findByPk(req.params.id, options);
     if (foundWishlist) {
-      return res.status(200).json({
-        status: "Success",
-        data: foundWishlist,
-      });
+      return successMsg.GET_SUCCESS(res, foundWishlist);
     }
     throw errors.NOT_FOUND("Wishlist", req.params.id);
   } catch (error) {
@@ -71,10 +66,7 @@ const createWishlist = async (req, res, next) => {
       products_id: products_id,
     });
 
-    return res.status(200).json({
-      status: "Wishlist created successfully",
-      data: wishlistCreated,
-    });
+    return successMsg.CREATE_SUCCESS(res, "Wishlist", wishlistCreated);
   } catch (error) {
     next(error);
   }
@@ -98,14 +90,17 @@ const updateWishlist = async (req, res, next) => {
         where: {
           id: req.params.id,
         },
+        returning: true,
       }
     );
 
     if (wishlistUpdated) {
-      return res.status(200).json({
-        status: "Wishlist updated successfully",
-        data: wishlistUpdated,
-      });
+      return successMsg.UPDATE_SUCCESS(
+        res,
+        "Wishlist",
+        req.params.id,
+        wishlistUpdated
+      );
     }
     throw errors.NOT_FOUND("Wishlist", req.params.id);
   } catch (error) {
@@ -120,9 +115,7 @@ const deleteWishlist = async (req, res, next) => {
     });
 
     if (wishlistDeleted) {
-      return res.status(200).json({
-        status: `Wishlist with id ${req.params.id} successfully deleted`,
-      });
+      return successMsg.DELETE_SUCCESS(res, "Wishlist", req.params.id);
     }
     throw errors.NOT_FOUND("Wishlist", req.params.id);
   } catch (error) {
