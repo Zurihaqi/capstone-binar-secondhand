@@ -3,7 +3,12 @@ const controller = require("../controllers/auth.controller");
 const validation = require("../validations/auth.validation");
 const validate = require("../middlewares/validation");
 
-const login = router.post("/login", controller.signIn);
+const login = router.post(
+  "/login",
+  validation.login(),
+  validate,
+  controller.signIn
+);
 const register = router.post(
   "/register",
   validation.register(),
