@@ -12,7 +12,6 @@ Install:
   stage: install
   only:
     - staging
-    - master
   script:
     - npm install
 
@@ -20,7 +19,6 @@ Production:
   image: ruby
   only:
     - staging
-    - master
   stage: deploy
   script:
     - apt-get update -qy
