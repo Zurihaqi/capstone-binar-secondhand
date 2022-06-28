@@ -1,4 +1,10 @@
-const { Product, User, Category, City } = require("../db/models/");
+const {
+  Product,
+  User,
+  Category,
+  City,
+  ProductImage,
+} = require("../db/models/");
 const errors = require("../misc/errors");
 const successMsg = require("../misc/success");
 
@@ -80,7 +86,14 @@ const createProduct = async (req, res, next) => {
       users_id: users_id,
       categories_id: categories_id,
     });
-    return successMsg.CREATE_SUCCESS(res, "Product", productCreated);
+    if (productCreated) {
+      const addProductImage = await ProductImage.create({
+        image_url: req.body.image_url,
+        products_id: productCreated.id,
+      });
+      productCreated.setDataValue("image_url", addProductImage.image_url);
+      return successMsg.CREATE_SUCCESS(res, "Product", productCreated);
+    }
   } catch (error) {
     next(error);
   }

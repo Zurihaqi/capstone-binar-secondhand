@@ -11,13 +11,15 @@ stages:
 Install:
   stage: install
   only:
+    - staging
     - master
-  script: 
+  script:
     - npm install
 
 Production:
   image: ruby
   only:
+    - staging
     - master
   stage: deploy
   script:
