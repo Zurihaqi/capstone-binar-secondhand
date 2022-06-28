@@ -1,4 +1,4 @@
-image: node
+image: node:latest
 before_script:
   - apt-get update -qy
   - apt-get install -y ruby-dev
@@ -7,7 +7,7 @@ stages:
   - staging
 production:
   stage: staging
-  image: ruby
+  image: ruby:latest
   script:
     - dpl --provider=heroku --app=${HEROKU_APP_NAME} --api-key=${HEROKU_API_KEY}
   only:
