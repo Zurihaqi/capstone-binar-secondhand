@@ -2,6 +2,8 @@ const router = require("express").Router();
 const controller = require("../controllers/product.controller");
 const validation = require("../validations/product.validation");
 const validate = require("../middlewares/validation");
+const multer = require("../middlewares/multer");
+const cloudinaryUpload = require("../middlewares/cloudinary");
 
 router.get("/", controller.getAllProducts);
 router.get(
@@ -12,8 +14,11 @@ router.get(
 );
 router.post(
   "/",
+  multer.imageUpload.array("image_url", 4),
+  multer.fileSizeLimitErrorHandler,
   validation.createProduct(),
   validate,
+  cloudinaryUpload,
   controller.createProduct
 );
 router.patch(

@@ -8,10 +8,6 @@ class apiError extends Error {
 
 module.exports = {
   //pesan-pesan error, tambah sesuai kebutuhan
-  EMPTY_LIST: (table) => {
-    const error = new apiError(404, "Empty data", `${table} is empty`);
-    return error;
-  },
   AVAILABLE_DATA: (table, id) => {
     const error = new apiError(
       403,
@@ -40,4 +36,14 @@ module.exports = {
     );
     return error;
   },
+  NOT_REGISTERED: (email) => {
+    const error = new apiError(404, "Not found", `${email} is not registered`);
+    return error;
+  },
+  EMAIL_REGISTERED: (email) => {
+    const error = new apiError(403, "Error", `${email} is already registered`);
+    return error;
+  },
+  INVALID_CRED: new apiError(401, "Error", "Email or password is wrong"),
+  UNAUTHORIZED: new apiError(401, "Unauthorized", "Login to use this API"),
 };
