@@ -14,7 +14,7 @@ module.exports = {
       });
       if (!userRegistered) throw errors.NOT_REGISTERED(email);
       const validPassword = bcrypt.compareSync(
-        password,
+        password.toString(),
         userRegistered.password
       );
       if (validPassword) {
