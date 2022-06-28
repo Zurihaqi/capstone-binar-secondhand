@@ -12,6 +12,7 @@ const createProductImage = () => [
 
 const updateProductImage = () => [
   body("products_id")
+    .optional()
     .isNumeric()
     .withMessage("products_id can only contain numbers"),
   param("id").notEmpty().withMessage("id cannot be empty"),

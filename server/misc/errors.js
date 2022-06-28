@@ -36,6 +36,6 @@ module.exports = {
     const error = new apiError(403, "Error", `${email} is already registered`);
     return error;
   },
-  INVALID_CRED: new apiError(401, "Error", "Email or password is wrong"),
+  INVALID_CRED: new apiError(401, "Error", "Wrong email or password"),
   UNAUTHORIZED: new apiError(401, "Unauthorized", "Login to use this API"),
 };

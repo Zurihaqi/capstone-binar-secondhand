@@ -12,8 +12,19 @@ Install:
   stage: install
   only:
     - master
-  script: 
+  script:
     - npm install
+
+Staging:
+  image: ruby
+  only:
+    - staging
+  stage: deploy
+  script:
+    - apt-get update -qy
+    - apt-get install -y ruby-dev
+    - gem install dpl
+    - dpl --provider=heroku --app=$HEROKU_APP_NAME --api-key=$HEROKU_API_KEY
 
 Production:
   image: ruby
