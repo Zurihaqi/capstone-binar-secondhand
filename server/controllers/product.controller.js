@@ -141,11 +141,14 @@ const updateProduct = async (req, res, next) => {
 
 const deleteProduct = async (req, res, next) => {
   try {
-    const productDeleted = await Product.destroy({
-      where: {
-        id: req.params.id,
-      },
-    });
+    const productDeleted = await Product.destroy(
+      { truncate: true, cascade: true },
+      {
+        where: {
+          id: req.params.id,
+        },
+      }
+    );
 
     if (productDeleted) {
       return successMsg.DELETE_SUCCESS(res, "Product", req.params.id);

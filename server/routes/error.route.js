@@ -25,14 +25,21 @@ const errorMessages = (error, req, res, next) => {
   }
 
   //Internal server error
-  const errStack = error.stack.split("\n");
-  errStack.shift();
-  const errLocation = errStack.map((e) => e.trim());
-  return res.status(500).json({
-    status: "Internal server error",
-    message: error.message,
-    stack: errLocation,
-  });
+  if (error.stack) {
+    const errStack = error.stack.split("\n");
+    errStack.shift();
+    const errLocation = errStack.map((e) => e.trim());
+    return res.status(500).json({
+      status: "Internal server error",
+      message: error.message,
+      stack: errLocation,
+    });
+  } else {
+    return res.status(500).json({
+      status: "Internal server error",
+      message: error,
+    });
+  }
 };
 
 module.exports = errorMessages;
