@@ -4,7 +4,6 @@ const success = require("../misc/success");
 
 module.exports = {
   getAllCities: async (req, res, next) => {
-    console.log(City);
     try {
       //? Get semua cities
       const cities = await City.findAll();

@@ -23,6 +23,8 @@ router.post(
 );
 router.patch(
   "/:id",
+  multer.imageUpload.array("image_url", 4),
+  multer.fileSizeLimitErrorHandler,
   validation.updateProduct(),
   validate,
   controller.updateProduct

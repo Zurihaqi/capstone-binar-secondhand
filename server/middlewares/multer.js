@@ -3,7 +3,7 @@ const fileSizeLimitErrorHandler = (error, req, res, next) => {
   if (error.code === "LIMIT_FILE_SIZE") {
     return res.status(400).json({
       status: "Error",
-      message: "File size too big. Max image size is 5MB",
+      message: "File size too large. Max image size is 5MB",
     });
   }
   next(error);
@@ -22,6 +22,7 @@ const imageUpload = multer({
   fileFilter: (req, file, cb) => {
     if (
       file.mimetype == "image/png" ||
+      file.mimetype == "image/webp" ||
       file.mimetype == "image/jpg" ||
       file.mimetype == "image/jpeg"
     ) {
