@@ -16,10 +16,6 @@ passport.use(
         id: jwt_payload.id,
         name: jwt_payload.name,
         email: jwt_payload.email,
-        photo_profile: jwt_payload.photo_profile,
-        phone: jwt_payload.phone,
-        address: jwt_payload.address,
-        city: jwt_payload.city,
       },
     })
       .then((user) => done(null, user))
