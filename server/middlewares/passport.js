@@ -24,13 +24,10 @@ passport.use(
 );
 
 module.exports = authenticate = (req, res, next) => {
-  passport.authenticate("jwt", { session: false }, async (user, info) => {
-    try {
-      if (!user) throw errors.UNAUTHORIZED;
-      req.user = user;
-      next();
-    } catch (error) {
-      next(error);
-    }
+  passport.authenticate("jwt", { session: false }, (error, user, info) => {
+    if (error) next(error);
+    req.user = user;
+    if (!user) throw errors.UNAUTHORIZED;
+    next();
   })(req, res, next);
 };
