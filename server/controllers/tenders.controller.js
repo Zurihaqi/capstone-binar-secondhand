@@ -4,22 +4,30 @@ const success = require("../misc/success");
 
 const options = {
   attributes: {
-    exclude: ["updated_at"],
+    exclude: ["createdAt", "updatedAt"],
   },
-  include: [
-    {
-      model: Product,
-      attributes: {
-        exclude: ["created_at", "updated_at"],
-      },
-    },
-    {
-      model: User,
-      attributes: {
-        exclude: ["password", "created_at", "updated_at"],
-      },
-    },
-  ],
+  // include: [
+  //   {
+  //     model: User,
+  //     attributes: {
+  //       exclude: ["password", "createdAt", "updatedAt"],
+  //     },
+  //   },
+  //   {
+  //     model: Product,
+  //     attributes: {
+  //       exclude: ["createdAt", "updatedAt"],
+  //     },
+  //     include: [
+  //       {
+  //         model: User,
+  //         attributes: {
+  //           exclude: ["password", "createdAt", "updatedAt"],
+  //         },
+  //       },
+  //     ],
+  //   },
+  // ],
 };
 
 module.exports = {
@@ -96,6 +104,8 @@ module.exports = {
   },
   getAllTenders: async (req, res, next) => {
     try {
+      // const user = req.user;
+      console.log(req.user);
       const tenders = await Tender.findAll(options);
       if (tenders) {
         return success.GET_SUCCESS(res, tenders);

@@ -19,7 +19,7 @@ passport.use(
         photo_profile: jwt_payload.photo_profile,
         phone: jwt_payload.phone,
         address: jwt_payload.address,
-        city: jwt_payload.city,
+        cities_id: jwt_payload.cities_id,
       },
     })
       .then((user) => done(null, user))
