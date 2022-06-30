@@ -40,7 +40,6 @@ const getAllProducts = async (req, res, next) => {
     if (allProducts[0] == null) {
       throw errors.EMPTY_TABLE("Product");
     }
-    console.log(req.user);
     return successMsg.GET_SUCCESS(res, allProducts);
   } catch (error) {
     next(error);

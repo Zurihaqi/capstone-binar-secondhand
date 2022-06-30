@@ -10,7 +10,7 @@ opts.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();
 opts.secretOrKey = JWT_SECRET;
 
 passport.use(
-  new JwtStrategy(opts, async (jwt_payload, done) => {
+  new JwtStrategy(opts, (jwt_payload, done) => {
     User.findOne({
       where: {
         id: jwt_payload.id,
