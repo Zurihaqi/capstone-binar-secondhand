@@ -1,17 +1,8 @@
-const {
-  Product,
-  User,
-  Category,
-  City,
-  ProductImage,
-} = require("../db/models/");
+const { Product, User, Category, City } = require("../db/models/");
 const errors = require("../misc/errors");
 const successMsg = require("../misc/success");
 
 const options = {
-  attributes: {
-    exclude: ["createdAt", "updatedAt"],
-  },
   include: [
     {
       model: Category,
@@ -69,7 +60,14 @@ const getProductById = async (req, res, next) => {
 
 const createProduct = async (req, res, next) => {
   try {
-    const { name, price, description, users_id, categories_id } = req.body;
+    const {
+      name,
+      price,
+      description,
+      users_id,
+      categories_id,
+      product_images,
+    } = req.body;
 
     //Cek apakah users_id atau categories_id ada dalam database sebelum membuat product
     const checkIfUserExist = await User.findByPk(users_id);
@@ -83,15 +81,11 @@ const createProduct = async (req, res, next) => {
       name: name,
       price: price,
       description: description,
+      product_images: product_images,
       users_id: users_id,
       categories_id: categories_id,
     });
     if (productCreated) {
-      const addProductImage = await ProductImage.create({
-        image_url: req.body.image_url,
-        products_id: productCreated.id,
-      });
-      productCreated.setDataValue("image_url", addProductImage.image_url);
       return successMsg.CREATE_SUCCESS(res, "Product", productCreated);
     }
   } catch (error) {
@@ -101,7 +95,14 @@ const createProduct = async (req, res, next) => {
 
 const updateProduct = async (req, res, next) => {
   try {
-    const { name, price, description, users_id, categories_id } = req.body;
+    const {
+      name,
+      price,
+      description,
+      users_id,
+      categories_id,
+      product_images,
+    } = req.body;
     const checkIfUserExist = await User.findByPk(users_id);
     const checkIfCategoryExist = await Category.findByPk(categories_id);
 
@@ -114,6 +115,7 @@ const updateProduct = async (req, res, next) => {
         name: name,
         price: price,
         description: description,
+        product_images: product_images,
         users_id: users_id,
         categories_id: categories_id,
       },
@@ -141,11 +143,14 @@ const updateProduct = async (req, res, next) => {
 
 const deleteProduct = async (req, res, next) => {
   try {
-    const productDeleted = await Product.destroy({
-      where: {
-        id: req.params.id,
-      },
-    });
+    const productDeleted = await Product.destroy(
+      { truncate: true, cascade: true },
+      {
+        where: {
+          id: req.params.id,
+        },
+      }
+    );
 
     if (productDeleted) {
       return successMsg.DELETE_SUCCESS(res, "Product", req.params.id);

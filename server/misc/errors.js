@@ -38,4 +38,14 @@ module.exports = {
   },
   INVALID_CRED: new apiError(401, "Error", "Wrong email or password"),
   UNAUTHORIZED: new apiError(401, "Unauthorized", "Login to use this API"),
+  FILE_SIZE: new apiError(
+    400,
+    "Error",
+    "File size too big. Max image size is 5MB"
+  ),
+  IMAGE_LIMIT: new apiError(
+    400,
+    "Error",
+    "File exceeds upload limit. product_images: 4 images, photo_profile: 1 image"
+  ),
 };
