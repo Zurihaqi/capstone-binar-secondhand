@@ -146,7 +146,7 @@ const updateProduct = async (req, res, next) => {
 const deleteProduct = async (req, res, next) => {
   try {
     const productDeleted = await Product.destroy(
-      { truncate: true, cascade: true },
+      // { truncate: true, cascade: true },
       {
         where: {
           id: req.params.id,
