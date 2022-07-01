@@ -20,6 +20,10 @@ module.exports = {
         type: Sequelize.TEXT,
         allowNull: false,
       },
+      product_images: {
+        type: Sequelize.ARRAY(Sequelize.STRING),
+        allowNull: true,
+      },
       users_id: {
         type: Sequelize.DataTypes.INTEGER,
         references: {

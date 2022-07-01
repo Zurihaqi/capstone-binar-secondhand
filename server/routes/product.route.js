@@ -14,7 +14,7 @@ router.get(
 );
 router.post(
   "/",
-  multer.imageUpload.array("image_url", 4),
+  multer.imageUpload.array("product_images", 4),
   multer.fileSizeLimitErrorHandler,
   validation.createProduct(),
   validate,

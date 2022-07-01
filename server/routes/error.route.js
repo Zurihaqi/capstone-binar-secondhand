@@ -9,7 +9,7 @@ const errorMessages = (error, req, res, next) => {
   ) {
     return res.status(400).json({
       status: "Error",
-      message: "image_url cannot be empty",
+      message: "product_images cannot be empty",
     });
   } else if (error.message === "Validation error") {
     return res.status(400).json({

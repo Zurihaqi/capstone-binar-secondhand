@@ -25,7 +25,7 @@ module.exports = {
           photo_profile: userRegistered.photo_profile,
           phone: userRegistered.phone,
           address: userRegistered.address,
-          city: userRegistered.cities_id,
+          cities_id: userRegistered.cities_id,
         };
         const token = jwt.sign(payload, JWT_SECRET, { expiresIn: "1h" });
         return success.LOGIN_SUCCESS(res, token);

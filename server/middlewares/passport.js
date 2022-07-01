@@ -10,16 +10,12 @@ opts.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();
 opts.secretOrKey = JWT_SECRET;
 
 passport.use(
-  new JwtStrategy(opts, async (jwt_payload, done) => {
+  new JwtStrategy(opts, (jwt_payload, done) => {
     User.findOne({
       where: {
         id: jwt_payload.id,
         name: jwt_payload.name,
         email: jwt_payload.email,
-        photo_profile: jwt_payload.photo_profile,
-        phone: jwt_payload.phone,
-        address: jwt_payload.address,
-        cities_id: jwt_payload.cities_id,
       },
     })
       .then((user) => done(null, user))
@@ -28,13 +24,10 @@ passport.use(
 );
 
 module.exports = authenticate = (req, res, next) => {
-  passport.authenticate("jwt", { session: false }, async (user, info) => {
-    try {
-      if (!user) throw errors.UNAUTHORIZED;
-      req.user = user;
-      next();
-    } catch (error) {
-      next(error);
-    }
+  passport.authenticate("jwt", { session: false }, (error, user, info) => {
+    if (error) next(error);
+    req.user = user;
+    if (!user) throw errors.UNAUTHORIZED;
+    next();
   })(req, res, next);
 };
