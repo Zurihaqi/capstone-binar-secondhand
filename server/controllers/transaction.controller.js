@@ -1,4 +1,5 @@
 const { Transaction, User, Product } = require("../db/models");
+const Op = require("sequelize").Op;
 const errors = require("../misc/errors");
 const successMsg = require("../misc/success");
 
