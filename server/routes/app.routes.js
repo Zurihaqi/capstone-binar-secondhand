@@ -1,6 +1,6 @@
 const router = require("express").Router();
 const { login, register } = require("./auth.route");
-const authentication = require("../middlewares/passport");
+const authorization = require("../middlewares/passport");
 const productRoutes = require("./product.route");
 const categoryRoutes = require("./category.route");
 const cityRoutes = require("./city.route");
@@ -14,7 +14,7 @@ const errorRoutes = require("./error.route");
 
 router.use(register);
 router.use(login);
-router.use(authentication);
+router.use(authorization);
 
 router.use("/products", productRoutes);
 router.use("/cities", cityRoutes);

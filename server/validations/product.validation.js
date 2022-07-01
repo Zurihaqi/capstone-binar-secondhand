@@ -17,6 +17,7 @@ const createProduct = () => [
   body("categories_id").notEmpty().withMessage("categories_id cannot be empty"),
 ];
 
+//tambahkan .optional() untuk endpoint update agar bisa mengupdate field tertentu
 const updateProduct = () => [
   body("users_id")
     .optional()

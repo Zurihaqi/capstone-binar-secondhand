@@ -27,6 +27,7 @@ router.patch(
   multer.errorHandler,
   validation.updateProduct(),
   validate,
+  cloudinaryUpload,
   controller.updateProduct
 );
 router.delete(
