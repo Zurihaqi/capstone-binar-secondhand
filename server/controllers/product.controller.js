@@ -2,7 +2,6 @@ const { use } = require("passport");
 const { Product, User, Category, City } = require("../db/models/");
 const errors = require("../misc/errors");
 const successMsg = require("../misc/success");
-const updater = require("../misc/updater");
 
 const options = {
   include: [
