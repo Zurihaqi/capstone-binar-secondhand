@@ -6,7 +6,7 @@ const updater = require("../misc/updater");
 module.exports = {
   updateUser: async (req, res, next) => {
     try {
-      const { id } = req.params;
+      const { id } = req.user;
       const user = await User.findByPk(id);
 
       if (!user) {
@@ -27,6 +27,10 @@ module.exports = {
 
       const { name, photo_profile, phone, address, cities_id } = req.body;
 
+      if (!req.body) {
+        return success.UPDATE_SUCCESS(res, "User", id, {});
+      }
+
       const incomingUserUpdate = updater(
         { name, photo_profile, phone, address, cities_id },
         {}
@@ -43,7 +47,7 @@ module.exports = {
   },
   getUserById: async (req, res, next) => {
     try {
-      const { id } = req.params;
+      const { id } = req.user;
       const user = await User.findByPk(id, {
         attributes: ["name", "photo_profile", "phone", "address", "cities_id"],
       });
@@ -57,7 +61,7 @@ module.exports = {
   },
   deleteUserById: async (req, res, next) => {
     try {
-      const { id } = req.params;
+      const { id } = req.user;
       const deletedUser = await User.findByPk(id, {
         attributes: ["name", "photo_profile", "phone", "address", "cities_id"],
       });
