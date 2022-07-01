@@ -25,7 +25,6 @@ module.exports = {
           key: "id",
         },
         allowNull: false,
-        unique: true,
       },
       buyer_id: {
         type: Sequelize.DataTypes.INTEGER,
@@ -36,7 +35,6 @@ module.exports = {
           key: "id",
         },
         allowNull: false,
-        unique: true,
       },
       products_id: {
         type: Sequelize.DataTypes.INTEGER,
@@ -47,7 +45,6 @@ module.exports = {
           key: "id",
         },
         allowNull: false,
-        unique: true,
       },
       createdAt: {
         allowNull: false,

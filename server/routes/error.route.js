@@ -4,13 +4,6 @@ const errorMessages = (error, req, res, next) => {
       status: error.status,
       message: error.message,
     });
-  } else if (
-    error.message === "Cannot read properties of undefined (reading 'mimetype')"
-  ) {
-    return res.status(400).json({
-      status: "Error",
-      message: "Image cannot be empty",
-    });
   } else if (error.message === "Validation error") {
     return res.status(400).json({
       status: "Sequelize validation error",
@@ -25,14 +18,21 @@ const errorMessages = (error, req, res, next) => {
   }
 
   //Internal server error
-  const errStack = error.stack.split("\n");
-  errStack.shift();
-  const errLocation = errStack.map((e) => e.trim());
-  return res.status(500).json({
-    status: "Internal server error",
-    message: error.message,
-    stack: errLocation,
-  });
+  if (error.stack) {
+    const errStack = error.stack.split("\n");
+    errStack.shift();
+    const errLocation = errStack.map((e) => e.trim());
+    return res.status(500).json({
+      status: "Internal server error",
+      message: error.message,
+      stack: errLocation,
+    });
+  } else {
+    return res.status(500).json({
+      status: "Internal server error",
+      message: error,
+    });
+  }
 };
 
 module.exports = errorMessages;

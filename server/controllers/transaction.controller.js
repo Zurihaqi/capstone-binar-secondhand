@@ -60,12 +60,14 @@ const createTransaction = async (req, res, next) => {
       seller_id,
       products_id,
     } = req.body;
-    const checkIfBuyerExist = await User.findByPk(buyer_id);
-    const checkIfSellerExist = await User.findByPk(seller_id);
-    const checkIfProductExist = await Product.findByPk(products_id);
 
+    const checkIfBuyerExist = await User.findByPk(buyer_id);
     if (!checkIfBuyerExist) throw errors.NOT_FOUND("User Buyer", buyer_id);
+
+    const checkIfSellerExist = await User.findByPk(seller_id);
     if (!checkIfSellerExist) throw errors.NOT_FOUND("User Seller", seller_id);
+
+    const checkIfProductExist = await Product.findByPk(products_id);
     if (!checkIfProductExist) throw errors.NOT_FOUND("Product", products_id);
 
     const transactionCreated = await Transaction.create({
@@ -95,13 +97,18 @@ const updateTransaction = async (req, res, next) => {
       products_id,
     } = req.body;
 
-    const checkIfBuyerExist = await User.findByPk(buyer_id);
-    const checkIfSellerExist = await User.findByPk(seller_id);
-    const checkIfProductExist = await Product.findByPk(products_id);
-
-    if (!checkIfBuyerExist) throw errors.NOT_FOUND("User Buyer", buyer_id);
-    if (!checkIfSellerExist) throw errors.NOT_FOUND("User Seller", seller_id);
-    if (!checkIfProductExist) throw errors.NOT_FOUND("Product", products_id);
+    if (buyer_id) {
+      const checkIfBuyerExist = await User.findByPk(buyer_id);
+      if (!checkIfBuyerExist) throw errors.NOT_FOUND("User Buyer", buyer_id);
+    }
+    if (seller_id) {
+      const checkIfSellerExist = await User.findByPk(seller_id);
+      if (!checkIfSellerExist) throw errors.NOT_FOUND("User Seller", seller_id);
+    }
+    if (products_id) {
+      const checkIfProductExist = await Product.findByPk(products_id);
+      if (!checkIfProductExist) throw errors.NOT_FOUND("Product", products_id);
+    }
 
     const transactionUpdated = await Transaction.update(
       {

@@ -4,22 +4,30 @@ const success = require("../misc/success");
 
 const options = {
   attributes: {
-    exclude: ["updated_at"],
+    exclude: ["createdAt", "updatedAt"],
   },
-  include: [
-    {
-      model: Product,
-      attributes: {
-        exclude: ["created_at", "updated_at"],
-      },
-    },
-    {
-      model: User,
-      attributes: {
-        exclude: ["password", "created_at", "updated_at"],
-      },
-    },
-  ],
+  // include: [
+  //   {
+  //     model: User,
+  //     attributes: {
+  //       exclude: ["password", "createdAt", "updatedAt"],
+  //     },
+  //   },
+  //   {
+  //     model: Product,
+  //     attributes: {
+  //       exclude: ["createdAt", "updatedAt"],
+  //     },
+  //     include: [
+  //       {
+  //         model: User,
+  //         attributes: {
+  //           exclude: ["password", "createdAt", "updatedAt"],
+  //         },
+  //       },
+  //     ],
+  //   },
+  // ],
 };
 
 module.exports = {
@@ -61,30 +69,30 @@ module.exports = {
   updateTender: async (req, res, next) => {
     try {
       const { id } = req.params;
-      const { offer_status, price, buyer_id, seller_id, products_id } =
-        req.body;
+      const { offer_status, price } = req.body;
 
-      if (offer_status && price && buyer_id && seller_id && products_id) {
+      if (offer_status && price) {
         //? Cek ketersediaan
-        const buyerExist = await User.findByPk(buyer_id);
-        const sellerExist = await User.findByPk(seller_id);
-        const productExist = await Product.findByPk(products_id);
+        // const buyerExist = await User.findByPk(buyer_id);
+        // const sellerExist = await User.findByPk(seller_id);
+        // const productExist = await Product.findByPk(products_id);
 
         //! Cek Error
-        if (!buyerExist) throw errors.NOT_FOUND("Buyer", buyer_id);
-        if (!sellerExist) throw errors.NOT_FOUND("seller", seller_id);
-        if (!productExist) throw errors.NOT_FOUND("Product", products_id);
+        // if (!buyerExist) throw errors.NOT_FOUND("Buyer", buyer_id);
+        // if (!sellerExist) throw errors.NOT_FOUND("seller", seller_id);
+        // if (!productExist) throw errors.NOT_FOUND("Product", products_id);
 
-        const tender = await Tender.update(
+        await Tender.update(
           {
             offer_status: offer_status,
             price: price,
-            buyer_id: buyer_id,
-            seller_id: seller_id,
-            products_id: products_id,
+            // buyer_id: buyer_id,
+            // seller_id: seller_id,
+            // products_id: products_id,
           },
           { where: { id: id } }
         );
+        const tender = await Tender.findByPk(id, options);
         if (tender) {
           return success.UPDATE_SUCCESS(res, "Tender", id, tender);
         }
@@ -96,7 +104,47 @@ module.exports = {
   },
   getAllTenders: async (req, res, next) => {
     try {
-      const tenders = await Tender.findAll(options);
+      const user = req.user;
+      console.log(req.user);
+      const tenders = await Tender.findAll({
+        ...options,
+      });
+      if (tenders) {
+        return success.GET_SUCCESS(res, tenders);
+      }
+      throw errors.EMPTY_TABLE("Tender");
+    } catch (error) {
+      next(error);
+    }
+  },
+  getAllSellerTenders: async (req, res, next) => {
+    try {
+      const user = req.user;
+      console.log(req.user);
+      const tenders = await Tender.findAll({
+        ...options,
+        where: {
+          seller_id: user.id,
+        },
+      });
+      if (tenders) {
+        return success.GET_SUCCESS(res, tenders);
+      }
+      throw errors.EMPTY_TABLE("Tender");
+    } catch (error) {
+      next(error);
+    }
+  },
+  getAllBuyerTenders: async (req, res, next) => {
+    try {
+      const user = req.user;
+      console.log(req.user);
+      const tenders = await Tender.findAll({
+        ...options,
+        where: {
+          seller_id: user.id,
+        },
+      });
       if (tenders) {
         return success.GET_SUCCESS(res, tenders);
       }
@@ -120,8 +168,9 @@ module.exports = {
   deleteTenderById: async (req, res, next) => {
     try {
       const { id } = req.params;
-      const deletedTender = await Tender.findByPk(id, options);
+      const deletedTender = await Tender.findByPk(id);
       if (deletedTender) {
+        deletedTender.destroy(id);
         return success.DELETE_SUCCESS(res, "Tender", id);
       }
       throw errors.NOT_FOUND("Tender", id);
