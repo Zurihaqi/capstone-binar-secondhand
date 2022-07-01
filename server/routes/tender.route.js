@@ -7,12 +7,14 @@ const {
   addTender,
   updateTender,
   deleteTenderById,
+  getAllSellerTenders,
 } = require("../controllers/tenders.controller");
 
-router.get("/", getAllTenders);
+router.get("/seller", getAllSellerTenders);
+router.get("/buyer", getAllSellerTenders);
 router.get("/:id", validation.getTenderById(), validate, getTenderById);
 router.post("/", validation.createTender(), validate, addTender);
-router.put("/:id", validation.updateTender(), validate, updateTender);
+router.patch("/:id", validation.updateTender(), validate, updateTender);
 router.delete("/:id", validation.deleteTender(), validate, deleteTenderById);
 
 module.exports = router;

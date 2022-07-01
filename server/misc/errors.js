@@ -16,6 +16,14 @@ module.exports = {
     );
     return error;
   },
+  AVAILABLE_EMAIL: () => {
+    const error = new apiError(
+      409,
+      "Email already exist",
+      `Email already exist but its not you`
+    );
+    return error;
+  },
   EMPTY_TABLE: (table) => {
     const error = new apiError(404, "Data empty", `${table} is empty`);
     return error;
