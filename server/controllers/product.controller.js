@@ -103,14 +103,17 @@ const updateProduct = async (req, res, next) => {
       categories_id,
       product_images,
     } = req.body;
-    const checkIfUserExist = await User.findByPk(users_id);
-    const checkIfCategoryExist = await Category.findByPk(categories_id);
 
-    console.log(name, price, description, users_id, categories_id);
-
-    if (!checkIfUserExist) throw errors.NOT_FOUND("User", users_id);
-    if (!checkIfCategoryExist)
-      throw errors.NOT_FOUND("Category", categories_id);
+    //hanya cek apabila user atau category id ingin diupdate
+    if (users_id) {
+      const checkIfUserExist = await User.findByPk(users_id);
+      if (!checkIfUserExist) throw errors.NOT_FOUND("User", users_id);
+    }
+    if (categories_id) {
+      const checkIfCategoryExist = await Category.findByPk(categories_id);
+      if (!checkIfCategoryExist)
+        throw errors.NOT_FOUND("Category", categories_id);
+    }
 
     const productUpdated = await Product.update(
       {

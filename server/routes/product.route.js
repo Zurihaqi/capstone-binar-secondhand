@@ -15,7 +15,7 @@ router.get(
 router.post(
   "/",
   multer.imageUpload.array("product_images", 4),
-  multer.fileSizeLimitErrorHandler,
+  multer.errorHandler,
   validation.createProduct(),
   validate,
   cloudinaryUpload,
@@ -23,10 +23,11 @@ router.post(
 );
 router.patch(
   "/:id",
-  multer.imageUpload.array("image_url", 4),
-  multer.fileSizeLimitErrorHandler,
+  multer.imageUpload.array("product_images", 4),
+  multer.errorHandler,
   validation.updateProduct(),
   validate,
+  cloudinaryUpload,
   controller.updateProduct
 );
 router.delete(

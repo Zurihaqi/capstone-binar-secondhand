@@ -2,7 +2,11 @@ const { body } = require("express-validator");
 
 module.exports = {
   login: () => [
-    body("email").notEmpty().withMessage("Enter an email"),
+    body("email")
+      .notEmpty()
+      .withMessage("Enter an email")
+      .normalizeEmail()
+      .isEmail(),
     body("password").notEmpty().withMessage("Enter a password"),
   ],
   register: () => [
@@ -11,7 +15,7 @@ module.exports = {
       .withMessage("Name cannot contain number or symbols")
       .isLength({ min: 3 })
       .withMessage("Name must be at least 3 characters long"),
-    body("email").isEmail().normalizeEmail().withMessage("Enter a valid email"),
+    body("email").normalizeEmail().isEmail().withMessage("Enter a valid email"),
     body("password").notEmpty().withMessage("Enter a password"),
   ],
 };

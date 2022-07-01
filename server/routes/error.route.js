@@ -4,13 +4,6 @@ const errorMessages = (error, req, res, next) => {
       status: error.status,
       message: error.message,
     });
-  } else if (
-    error.message === "Cannot read properties of undefined (reading 'mimetype')"
-  ) {
-    return res.status(400).json({
-      status: "Error",
-      message: "product_images cannot be empty",
-    });
   } else if (error.message === "Validation error") {
     return res.status(400).json({
       status: "Sequelize validation error",
