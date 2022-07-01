@@ -43,7 +43,7 @@ const getAllProducts = async (req, res, next) => {
 
     //filtering by query
     if (
-      !req.query.skip && !req.query.row
+      !skip && !row
         ? (options.where = { [Op.and]: queries })
         : delete options.where
     );
