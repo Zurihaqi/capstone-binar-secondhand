@@ -26,8 +26,8 @@ const getAllTransaction = async (req, res, next) => {
   try {
     let { skip, row } = req.query;
 
-    if (skip) options.offset = +skip - 1;
-    if (row) options.limit = +row;
+    if (skip ? (options.offset = +skip - 1) : delete options.offset);
+    if (row ? (options.limit = +row) : delete options.limit);
 
     const allTransaction = await Transaction.findAll(options);
 
