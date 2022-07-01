@@ -45,7 +45,7 @@ const getAllTransaction = async (req, res, next) => {
 
     const allTransaction = await Transaction.findAll(options);
 
-    if (allTransaction.length[0] == null) {
+    if (allTransaction[0] == null) {
       throw errors.EMPTY_TABLE("Transaction");
     }
     return successMsg.GET_SUCCESS(res, data);
