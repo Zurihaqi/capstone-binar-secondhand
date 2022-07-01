@@ -24,8 +24,6 @@ module.exports = {
           : delete options.where
       );
 
-      console.log(options);
-
       const cities = await City.findAll(options);
       if (cities) {
         return success.GET_SUCCESS(res, cities);
