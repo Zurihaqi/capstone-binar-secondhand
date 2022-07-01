@@ -1,6 +1,6 @@
 const multer = require("multer");
 const errors = require("../misc/errors");
-const fileSizeLimitErrorHandler = (error, req, res, next) => {
+const errorHandler = (error, req, res, next) => {
   if (error.code === "LIMIT_FILE_SIZE") {
     throw errors.FILE_SIZE;
   } else if (error.code === "LIMIT_UNEXPECTED_FILE") {
@@ -13,6 +13,9 @@ const mediaStorage = multer.diskStorage({
   filename: (req, file, cb) => {
     const fileType = file.mimetype.split("/")[1];
     const fileName = Date.now() + "-" + file.fieldname + `.${fileType}`;
+    //bypass validasi ketika sudah mengisi file
+    if (file.fieldname === "product_images") req.body.product_images = true;
+    if (file.fieldname === "photo_profile") req.body.photo_profile = true;
     cb(null, fileName);
   },
 });
@@ -22,6 +25,7 @@ const imageUpload = multer({
   fileFilter: (req, file, cb) => {
     if (
       file.mimetype == "image/png" ||
+      file.mimetype == "image/webp" ||
       file.mimetype == "image/jpg" ||
       file.mimetype == "image/jpeg"
     ) {
@@ -29,7 +33,7 @@ const imageUpload = multer({
     }
     cb(null, false);
     return cb(
-      new Error("Invalid image format. Allowed format: png, jpg, jpeg")
+      new Error("Invalid image format. Allowed format: png, jpg, jpeg, webp")
     );
   },
   limits: {
@@ -39,5 +43,5 @@ const imageUpload = multer({
 
 module.exports = {
   imageUpload,
-  fileSizeLimitErrorHandler,
+  errorHandler,
 };

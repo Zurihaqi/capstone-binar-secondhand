@@ -33,7 +33,6 @@ module.exports = {
           key: "id",
         },
         allowNull: false,
-        unique: true,
       },
       categories_id: {
         type: Sequelize.DataTypes.INTEGER,
@@ -44,7 +43,6 @@ module.exports = {
           key: "id",
         },
         allowNull: false,
-        unique: true,
       },
       createdAt: {
         allowNull: false,
