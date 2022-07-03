@@ -11,6 +11,7 @@ module.exports = {
   ],
   register: () => [
     body("name")
+      //alphabetic = string tanpa angka dan simbol, ignore: " " = memperbolehkan spasi
       .isAlpha("en-US", { ignore: " " })
       .withMessage("Name cannot contain number or symbols")
       .isLength({ min: 3 })
