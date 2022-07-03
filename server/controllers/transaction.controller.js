@@ -29,11 +29,9 @@ const getAllTransaction = async (req, res, next) => {
       if (key != "skip" && key != "row") queries.push({ [key]: value });
     }
 
-    //pagination, row = limit, skip = offset
     if (skip ? (options.offset = +skip - 1) : delete options.offset);
     if (row ? (options.limit = +row) : delete options.limit);
 
-    //filtering by query
     if (
       queries[0]
         ? (options.where = { [Op.and]: queries })
