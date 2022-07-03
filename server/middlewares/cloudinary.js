@@ -12,16 +12,22 @@ const cloudinaryUpload = async (req, res, next) => {
     //hanya berjalan jika req.files terisi
     if (req.files[0]) {
       const foldering = `my-asset/${req.files[0].mimetype.split("/")[0]}`;
-      const product_images = [];
+      let product_images = [];
+      let photo_profile = [];
       for (const file of req.files) {
         const uploadResult = await cloudinary.uploader.upload(file.path, {
           folder: foldering,
           use_filename: true,
           resource_type: "image",
         });
-        product_images.push(uploadResult.secure_url);
+        if (file.fieldname === "product_images")
+          product_images.push(uploadResult.secure_url);
+        if (file.fieldname === "photo_profile")
+          photo_profile.push(uploadResult.secure_url);
       }
-      req.body.product_images = product_images;
+      if (product_images) req.body.product_images = product_images;
+      if (photo_profile) req.body.photo_profile = photo_profile;
+
       return next();
     }
     next();

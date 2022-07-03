@@ -1,7 +1,18 @@
 const { Category } = require("../db/models");
+const Op = require("sequelize").Op;
 
 const getAllCategory = async (req, res) => {
   try {
+    let { skip, row, name } = req.query;
+
+    if (skip ? (options.offset = +skip - 1) : delete options.offset);
+    if (row ? (options.limit = +row) : delete options.limit);
+    if (
+      name
+        ? (options.where = { name: { [Op.iLike]: `%${name}%` } })
+        : delete options.where
+    );
+
     const allCategory = await Category.findAll();
 
     res.status(201).json({

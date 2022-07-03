@@ -25,7 +25,11 @@ module.exports = {
     return error;
   },
   EMPTY_TABLE: (table) => {
-    const error = new apiError(404, "Data empty", `${table} is empty`);
+    const error = new apiError(
+      404,
+      "Not found",
+      `${table} is empty or no results found`
+    );
     return error;
   },
   NOT_FOUND: (table, id) => {

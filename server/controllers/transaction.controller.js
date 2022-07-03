@@ -1,11 +1,9 @@
 const { Transaction, User, Product } = require("../db/models");
+const Op = require("sequelize").Op;
 const errors = require("../misc/errors");
 const successMsg = require("../misc/success");
 
 const options = {
-  attributes: {
-    exclude: ["createdAt", "updatedAt"],
-  },
   include: [
     {
       model: User,
@@ -26,12 +24,23 @@ const getAllTransaction = async (req, res, next) => {
   try {
     let { skip, row } = req.query;
 
-    if (skip) options.offset = +skip - 1;
-    if (row) options.limit = +row;
+    let queries = [];
+    for (const [key, value] of Object.entries(req.query)) {
+      if (key != "skip" && key != "row") queries.push({ [key]: value });
+    }
+
+    if (skip ? (options.offset = +skip - 1) : delete options.offset);
+    if (row ? (options.limit = +row) : delete options.limit);
+
+    if (
+      queries[0]
+        ? (options.where = { [Op.and]: queries })
+        : delete options.where
+    );
 
     const allTransaction = await Transaction.findAll(options);
 
-    if (allTransaction.length[0] == null) {
+    if (allTransaction[0] == null) {
       throw errors.EMPTY_TABLE("Transaction");
     }
     return successMsg.GET_SUCCESS(res, data);

@@ -16,6 +16,10 @@ module.exports = {
       .isLength({ min: 3 })
       .withMessage("Name must be at least 3 characters long"),
     body("email").normalizeEmail().isEmail().withMessage("Enter a valid email"),
-    body("password").notEmpty().withMessage("Enter a password"),
+    body("password")
+      .notEmpty()
+      .withMessage("Enter a password")
+      .isLength({ min: 6 })
+      .withMessage("Require 6 characters"),
   ],
 };

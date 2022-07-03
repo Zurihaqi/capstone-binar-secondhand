@@ -26,8 +26,21 @@ const getAllWishlist = async (req, res, next) => {
   try {
     let { skip, row } = req.query;
 
-    if (skip) options.offset = +skip - 1;
-    if (row) options.limit = +row;
+    let queries = [];
+    for (const [key, value] of Object.entries(req.query)) {
+      if (key != "skip" && key != "row") queries.push({ [key]: value });
+    }
+
+    //pagination, row = limit, skip = offset
+    if (skip ? (options.offset = +skip - 1) : delete options.offset);
+    if (row ? (options.limit = +row) : delete options.limit);
+
+    //filtering by query
+    if (
+      queries[0]
+        ? (options.where = { [Op.and]: queries })
+        : delete options.where
+    );
 
     const allWishlist = await Wishlist.findAll(options);
 
