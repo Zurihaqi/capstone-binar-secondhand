@@ -1,4 +1,5 @@
 const { Notification, User, Product } = require("../db/models");
+const Op = require("sequelize").Op;
 const errors = require("../misc/errors");
 
 const options = {

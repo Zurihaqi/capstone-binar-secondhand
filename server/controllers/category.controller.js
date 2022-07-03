@@ -1,4 +1,5 @@
 const { Category } = require("../db/models");
+const Op = require("sequelize").Op;
 
 const getAllCategory = async (req, res) => {
   try {
