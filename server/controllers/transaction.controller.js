@@ -4,9 +4,6 @@ const errors = require("../misc/errors");
 const successMsg = require("../misc/success");
 
 const options = {
-  attributes: {
-    exclude: ["createdAt", "updatedAt"],
-  },
   include: [
     {
       model: User,
@@ -29,7 +26,7 @@ const getAllTransaction = async (req, res, next) => {
 
     let queries = [];
     for (const [key, value] of Object.entries(req.query)) {
-      queries.push({ [key]: value });
+      if (key != "skip" && key != "row") queries.push({ [key]: value });
     }
 
     //pagination, row = limit, skip = offset
@@ -38,7 +35,7 @@ const getAllTransaction = async (req, res, next) => {
 
     //filtering by query
     if (
-      !skip && !row
+      queries[0]
         ? (options.where = { [Op.and]: queries })
         : delete options.where
     );

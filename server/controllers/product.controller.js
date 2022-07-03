@@ -34,7 +34,7 @@ const getAllProducts = async (req, res, next) => {
 
     let queries = [];
     for (const [key, value] of Object.entries(req.query)) {
-      queries.push({ [key]: value });
+      if (key != "skip" && key != "row") queries.push({ [key]: value });
     }
 
     //pagination, row = limit, skip = offset
@@ -43,10 +43,12 @@ const getAllProducts = async (req, res, next) => {
 
     //filtering by query
     if (
-      !skip && !row
+      queries[0]
         ? (options.where = { [Op.and]: queries })
         : delete options.where
     );
+
+    //console.log(options);
 
     const allProducts = await Product.findAll(options);
     //error handler ketika tabel kosong
