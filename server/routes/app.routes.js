@@ -14,6 +14,7 @@ const errorRoutes = require("./error.route");
 
 router.use(register);
 router.use(login);
+//authorization apa authentication ya? wkwk
 router.use(authorization);
 
 router.use("/products", productRoutes);
