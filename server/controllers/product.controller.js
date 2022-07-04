@@ -41,10 +41,16 @@ const getAllProducts = async (req, res, next) => {
     if (skip ? (options.offset = +skip - 1) : delete options.offset);
     if (row ? (options.limit = +row) : delete options.limit);
 
+    console.log("queries statement: ");
+    console.log(Object.keys(queries[0]));
+
     //filtering by query
+    const params = Object.keys(queries[0]);
     if (
       queries[0]
-        ? (options.where = { [Op.and]: queries })
+        ? (options.where = {
+            [params]: { [Op.iLike]: `%${Object.values(queries[0])}%` },
+          })
         : delete options.where
     );
 
