@@ -14,26 +14,19 @@ module.exports = {
   getAllCities: async (req, res, next) => {
     try {
       //? Get semua cities
-      let { skip, row } = req.query;
+      let { skip, row, name } = req.query;
 
-      if (skip) options.offset = +skip - 1;
-      if (row) options.limit = +row;
+      if (skip ? (options.offset = +skip - 1) : delete options.offset);
+      if (row ? (options.limit = +row) : delete options.limit);
+      if (
+        name
+          ? (options.where = { name: { [Op.iLike]: `%${name}%` } })
+          : delete options.where
+      );
 
-      let cities;
-      if (req.query.name) {
-        console.log(req.query.name);
-        cities = await City.findAll({
-          ...options,
-          where: { name: { [Op.like]: `%${req.query.name}%` } },
-        });
-        if (cities) {
-          return success.GET_SUCCESS(res, cities);
-        }
-      } else {
-        cities = await City.findAll(options);
-        if (cities) {
-          return success.GET_SUCCESS(res, cities);
-        }
+      const cities = await City.findAll(options);
+      if (cities) {
+        return success.GET_SUCCESS(res, cities);
       }
 
       throw errors.EMPTY_TABLE("Cities");
