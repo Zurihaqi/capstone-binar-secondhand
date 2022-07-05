@@ -14,8 +14,6 @@ router.patch(
   "/",
   multer.imageUpload.single("photo_profile"),
   multer.errorHandler,
-  validation.updateUser(),
-  validate,
   cloudinaryUpload,
   updateUser
 );

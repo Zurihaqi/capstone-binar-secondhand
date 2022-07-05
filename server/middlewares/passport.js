@@ -23,10 +23,16 @@ passport.use(
   })
 );
 
-module.exports = authorization = (req, res, next) => {
+module.exports = authentication = (req, res, next) => {
   passport.authenticate("jwt", { session: false }, (error, user, info) => {
     if (error) next(error);
-    if (!user) throw errors.UNAUTHORIZED;
+    if (!user) {
+      const error = errors.UNAUTHORIZED;
+      return res.status(error.code).json({
+        status: error.status,
+        message: error.message,
+      });
+    }
     req.user = user;
     next();
   })(req, res, next);

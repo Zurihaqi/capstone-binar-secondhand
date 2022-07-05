@@ -32,12 +32,18 @@ module.exports = {
       }
 
       const incomingUserUpdate = updater(
-        { name, photo_profile, phone, address, cities_id },
+        { name, photo_profile, phone, address, cities_id, email },
         {}
       );
 
+      if (incomingUserUpdate) {
+        const error = {};
+        error.message = "EmptyBody";
+        next(error);
+      }
+
       await user.update({
-        incomingUserUpdate,
+        ...incomingUserUpdate,
       });
 
       return success.UPDATE_SUCCESS(res, "User", id, incomingUserUpdate);
