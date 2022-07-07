@@ -1,6 +1,12 @@
 const { Category } = require("../db/models");
 const Op = require("sequelize").Op;
 
+const options = {
+  attributes: {
+    exclude: ["createdAt", "updatedAt"],
+  },
+};
+
 const getAllCategory = async (req, res) => {
   try {
     let { skip, row, name } = req.query;
