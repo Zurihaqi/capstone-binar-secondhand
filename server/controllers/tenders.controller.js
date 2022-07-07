@@ -142,7 +142,7 @@ module.exports = {
       const tenders = await Tender.findAll({
         ...options,
         where: {
-          seller_id: user.id,
+          buyer_id: user.id,
         },
       });
       if (tenders) {

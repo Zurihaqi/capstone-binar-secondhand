@@ -15,6 +15,11 @@ const errorMessages = (error, req, res, next) => {
       message: error.message,
       detail: error.parent.detail,
     });
+  } else if (error.message === "EmptyBody") {
+    return res.status(404).json({
+      status: "Not Found",
+      message: "Data body not found",
+    });
   }
 
   //Internal server error

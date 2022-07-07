@@ -9,13 +9,11 @@ const {
   deleteUserById,
 } = require("../controllers/users.controller");
 
-router.get("/", validation.getUserById(), validate, getUserById);
+router.get("/", getUserById);
 router.patch(
   "/",
   multer.imageUpload.single("photo_profile"),
   multer.errorHandler,
-  validation.updateUser(),
-  validate,
   cloudinaryUpload,
   updateUser
 );
