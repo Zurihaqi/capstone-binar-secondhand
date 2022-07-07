@@ -3,6 +3,7 @@ const express = require("express");
 const app = express();
 const path = require("path");
 const logger = require("morgan");
+const open = require("open");
 
 // call all module route here
 const router = require("./server/routes/app.routes");
@@ -14,6 +15,8 @@ app.use(logger("combined"));
 
 app.use("/api", router);
 app.use("/", (req, res) => {
+  // opens the url in the default browser
+  open("https://documenter.getpostman.com/view/13273250/UzJFweL2");
   res.json({
     message: "Selamat Datang di API SecondHand",
   });

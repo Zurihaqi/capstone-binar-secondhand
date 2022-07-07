@@ -4,6 +4,8 @@ const validation = require("../validations/transaction.validation");
 const validate = require("../middlewares/validation");
 
 router.get("/", controller.getAllTransaction);
+router.get("/seller", controller.getAllTransactionAsSeller);
+router.get("/buyer", controller.getAllTransactionAsBuyer);
 router.get(
   "/:id",
   validation.getById(),
@@ -19,7 +21,7 @@ router.patch(
 );
 router.delete(
   "/:id",
-  validation.delete,
+  validation.delete(),
   validate,
   controller.deleteTransaction
 );

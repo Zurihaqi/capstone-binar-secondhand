@@ -32,9 +32,16 @@ const getAllTransaction = async (req, res, next) => {
     if (skip ? (options.offset = +skip - 1) : delete options.offset);
     if (row ? (options.limit = +row) : delete options.limit);
 
+    //filtering by query
+    let params;
+    if (queries[0]) {
+      params = Object.keys(queries[0]);
+    }
     if (
       queries[0]
-        ? (options.where = { [Op.and]: queries })
+        ? (options.where = {
+            [params]: { [Op.iLike]: `%${Object.values(queries[0])}%` },
+          })
         : delete options.where
     );
 
@@ -43,7 +50,51 @@ const getAllTransaction = async (req, res, next) => {
     if (allTransaction[0] == null) {
       throw errors.EMPTY_TABLE("Transaction");
     }
-    return successMsg.GET_SUCCESS(res, data);
+    return successMsg.GET_SUCCESS(res, allTransaction);
+  } catch (error) {
+    next(error);
+  }
+};
+const getAllTransactionAsSeller = async (req, res, next) => {
+  try {
+    let { skip, row } = req.query;
+
+    if (skip ? (options.offset = +skip - 1) : delete options.offset);
+    if (row ? (options.limit = +row) : delete options.limit);
+
+    console.log(req.user.id);
+
+    options.where = {
+      seller_id: req.user.id,
+    };
+
+    const allTransaction = await Transaction.findAll(options);
+
+    if (allTransaction[0] == null) {
+      throw errors.EMPTY_TABLE("Transaction");
+    }
+    return successMsg.GET_SUCCESS(res, allTransaction);
+  } catch (error) {
+    next(error);
+  }
+};
+const getAllTransactionAsBuyer = async (req, res, next) => {
+  try {
+    let { skip, row } = req.query;
+
+    if (skip ? (options.offset = +skip - 1) : delete options.offset);
+    if (row ? (options.limit = +row) : delete options.limit);
+
+    options.where = {
+      buyer_id: req.user.id,
+    };
+
+    const allTransaction = await Transaction.findAll(options);
+
+    if (allTransaction[0] == null) {
+      throw errors.EMPTY_TABLE("Transaction");
+    }
+    return successMsg.GET_SUCCESS(res, allTransaction);
   } catch (error) {
     next(error);
   }
@@ -61,14 +112,10 @@ const getTransactionById = async (req, res, next) => {
 
 const createTransaction = async (req, res, next) => {
   try {
-    const {
-      payment_status,
-      invoice_code,
-      price,
-      buyer_id,
-      seller_id,
-      products_id,
-    } = req.body;
+    const { payment_status, price, buyer_id, seller_id, products_id } =
+      req.body;
+
+    const invoice_code = Math.random().toString(36).slice(-6).toUpperCase();
 
     const checkIfBuyerExist = await User.findByPk(buyer_id);
     if (!checkIfBuyerExist) throw errors.NOT_FOUND("User Buyer", buyer_id);
@@ -165,6 +212,8 @@ const deleteTransaction = async (req, res, next) => {
 
 module.exports = {
   getAllTransaction,
+  getAllTransactionAsSeller,
+  getAllTransactionAsBuyer,
   getTransactionById,
   createTransaction,
   updateTransaction,

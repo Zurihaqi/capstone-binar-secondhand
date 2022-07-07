@@ -6,7 +6,6 @@ module.exports = {
     body("payment_status")
       .notEmpty()
       .withMessage("payment_status cannot be empty"),
-    body("invoice_code").notEmpty().withMessage("invoice_code cannot be empty"),
     body("price").isNumeric().withMessage("price can only contain numbers"),
     body("buyer_id")
       .isNumeric()
@@ -39,15 +38,11 @@ module.exports = {
     body("seller_id")
       .optional()
       .isNumeric()
-      .withMessage("seller_id can only contain numbers")
-      .notEmpty()
-      .withMessage("seller_id cannot be empty"),
+      .withMessage("seller_id can only contain numbers"),
     body("products_id")
       .optional()
       .isNumeric()
-      .withMessage("products_id can only contain numbers")
-      .notEmpty()
-      .withMessage("products_id cannot be empty"),
+      .withMessage("products_id can only contain numbers"),
   ],
   delete: () => [param("id").notEmpty().withMessage("Id cannot be empty")],
 };
