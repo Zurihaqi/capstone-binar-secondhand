@@ -36,7 +36,7 @@ module.exports = {
         {}
       );
 
-      if (incomingUserUpdate) {
+      if (!incomingUserUpdate) {
         const error = {};
         error.message = "EmptyBody";
         next(error);
