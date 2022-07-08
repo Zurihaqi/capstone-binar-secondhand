@@ -6,6 +6,7 @@ const multer = require("../middlewares/multer");
 const cloudinaryUpload = require("../middlewares/cloudinary");
 
 router.get("/", controller.getAllProducts);
+router.get("/my-own", controller.getAllMyProducts);
 router.get(
   "/:id",
   validation.getProductById(),

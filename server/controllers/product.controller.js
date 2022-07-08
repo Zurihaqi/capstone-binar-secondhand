@@ -71,6 +71,49 @@ const getAllProducts = async (req, res, next) => {
     next(error);
   }
 };
+const getAllMyProducts = async (req, res, next) => {
+  try {
+    let { skip, row } = req.query;
+
+    let queries = [];
+    for (const [key, value] of Object.entries(req.query)) {
+      if (key != "skip" && key != "row") queries.push({ [key]: value });
+    }
+
+    //pagination, row = limit, skip = offset
+    if (skip ? (options.offset = +skip - 1) : delete options.offset);
+    if (row ? (options.limit = +row) : delete options.limit);
+
+    options.where = {
+      users_id: req.user.id,
+    };
+
+    //filtering by query
+    let params;
+    if (queries[0]) {
+      params = Object.keys(queries[0]);
+    }
+    if (
+      queries[0]
+        ? (options.where = {
+            ...options.where,
+            [params]: { [Op.iLike]: `%${Object.values(queries[0])}%` },
+          })
+        : delete options.where.params
+    );
+
+    //console.log(options);
+
+    const allProducts = await Product.findAll(options);
+    //error handler ketika tabel kosong
+    if (allProducts[0] == null) {
+      throw errors.EMPTY_TABLE("Product");
+    }
+    return successMsg.GET_SUCCESS(res, allProducts);
+  } catch (error) {
+    next(error);
+  }
+};
 
 const getProductById = async (req, res, next) => {
   try {
@@ -197,6 +240,7 @@ const deleteProduct = async (req, res, next) => {
 
 module.exports = {
   getAllProducts,
+  getAllMyProducts,
   getProductById,
   createProduct,
   updateProduct,
