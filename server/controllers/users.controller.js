@@ -1,4 +1,4 @@
-const { User } = require("../db/models");
+const { User, City } = require("../db/models");
 const errors = require("../misc/errors");
 const success = require("../misc/success");
 const updater = require("../misc/updater");
@@ -13,17 +13,17 @@ module.exports = {
         throw errors.NOT_FOUND("User", id);
       }
 
-      const { email } = req.body;
+      // const { email } = req.body;
 
-      if (email) {
-        const checkEmail = await User.findOne({
-          where: { email: email },
-        });
+      // if (email) {
+      //   const checkEmail = await User.findOne({
+      //     where: { email: email },
+      //   });
 
-        if (checkEmail && email != user.email) {
-          throw errors.AVAILABLE_EMAIL();
-        }
-      }
+      //   if (checkEmail && email != user.email) {
+      //     throw errors.AVAILABLE_EMAIL();
+      //   }
+      // }
 
       const { name, photo_profile, phone, address, cities_id } = req.body;
 
@@ -32,7 +32,7 @@ module.exports = {
       }
 
       const incomingUserUpdate = updater(
-        { name, photo_profile, phone, address, cities_id, email },
+        { name, photo_profile, phone, address, cities_id },
         {}
       );
 
@@ -55,7 +55,15 @@ module.exports = {
     try {
       const { id } = req.user;
       const user = await User.findByPk(id, {
-        attributes: ["name", "photo_profile", "phone", "address", "cities_id"],
+        attributes: ["name", "photo_profile", "phone", "address"],
+        include: [
+          {
+            model: City,
+            attributes: {
+              exclude: ["createdAt", "updatedAt"],
+            },
+          },
+        ],
       });
       if (user) {
         return success.GET_SUCCESS(res, user);
