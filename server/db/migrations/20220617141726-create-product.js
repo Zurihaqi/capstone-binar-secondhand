@@ -20,6 +20,10 @@ module.exports = {
         type: Sequelize.TEXT,
         allowNull: false,
       },
+      status: {
+        type: Sequelize.STRING,
+        allowNull: false,
+      },
       product_images: {
         type: Sequelize.ARRAY(Sequelize.STRING),
         allowNull: true,

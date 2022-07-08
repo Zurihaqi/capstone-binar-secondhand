@@ -10,7 +10,7 @@ const createProduct = () => [
     .withMessage("Product name must be at least 3 characters long"),
   body("price").isNumeric().withMessage("Price can only contain numbers"),
   body("description").notEmpty().withMessage("description cannot be empty"),
-  body("users_id").notEmpty().withMessage("users_id cannot be empty"),
+  // body("users_id").notEmpty().withMessage("users_id cannot be empty"),
   body("product_images")
     .notEmpty()
     .withMessage("product_images cannot be empty"),
@@ -19,10 +19,10 @@ const createProduct = () => [
 
 //tambahkan .optional() untuk endpoint update agar bisa mengupdate field tertentu
 const updateProduct = () => [
-  body("users_id")
-    .optional()
-    .isNumeric()
-    .withMessage("users_id can only contain numbers"),
+  // body("users_id")
+  //   .optional()
+  //   .isNumeric()
+  //   .withMessage("users_id can only contain numbers"),
   body("name")
     .optional()
     .isLength({ min: 3 })
