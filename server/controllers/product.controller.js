@@ -41,11 +41,65 @@ const getAllProducts = async (req, res, next) => {
     if (skip ? (options.offset = +skip - 1) : delete options.offset);
     if (row ? (options.limit = +row) : delete options.limit);
 
+    options.where = {
+      status: "publish",
+    };
+
     //filtering by query
+    let params;
+    if (queries[0]) {
+      params = Object.keys(queries[0]);
+    }
     if (
       queries[0]
-        ? (options.where = { [Op.and]: queries })
-        : delete options.where
+        ? (options.where = {
+            ...options.where,
+            [params]: { [Op.iLike]: `%${Object.values(queries[0])}%` },
+          })
+        : delete options.where.params
+    );
+
+    //console.log(options);
+
+    const allProducts = await Product.findAll(options);
+    //error handler ketika tabel kosong
+    if (allProducts[0] == null) {
+      throw errors.EMPTY_TABLE("Product");
+    }
+    return successMsg.GET_SUCCESS(res, allProducts);
+  } catch (error) {
+    next(error);
+  }
+};
+const getAllMyProducts = async (req, res, next) => {
+  try {
+    let { skip, row } = req.query;
+
+    let queries = [];
+    for (const [key, value] of Object.entries(req.query)) {
+      if (key != "skip" && key != "row") queries.push({ [key]: value });
+    }
+
+    //pagination, row = limit, skip = offset
+    if (skip ? (options.offset = +skip - 1) : delete options.offset);
+    if (row ? (options.limit = +row) : delete options.limit);
+
+    options.where = {
+      users_id: req.user.id,
+    };
+
+    //filtering by query
+    let params;
+    if (queries[0]) {
+      params = Object.keys(queries[0]);
+    }
+    if (
+      queries[0]
+        ? (options.where = {
+            ...options.where,
+            [params]: { [Op.iLike]: `%${Object.values(queries[0])}%` },
+          })
+        : delete options.where.params
     );
 
     //console.log(options);
@@ -75,14 +129,12 @@ const getProductById = async (req, res, next) => {
 
 const createProduct = async (req, res, next) => {
   try {
-    const {
-      name,
-      price,
-      description,
-      users_id,
-      categories_id,
-      product_images,
-    } = req.body;
+    const { name, price, description, categories_id, product_images } =
+      req.body;
+
+    const users_id = req.user.id;
+
+    let status = "preview";
 
     //Cek apakah users_id atau categories_id ada dalam database sebelum membuat product
     const checkIfUserExist = await User.findByPk(users_id);
@@ -97,6 +149,7 @@ const createProduct = async (req, res, next) => {
       price: price,
       description: description,
       product_images: product_images,
+      status: status,
       users_id: users_id,
       categories_id: categories_id,
     });
@@ -110,14 +163,18 @@ const createProduct = async (req, res, next) => {
 
 const updateProduct = async (req, res, next) => {
   try {
-    const {
-      name,
-      price,
-      description,
-      users_id,
-      categories_id,
-      product_images,
-    } = req.body;
+    const { name, price, description, categories_id, product_images } =
+      req.body;
+
+    const users_id = req.user.id;
+
+    let status = "preview";
+
+    const query = req.query;
+
+    if ("publish" in query) {
+      status = "publish";
+    }
 
     //hanya cek apabila user atau category id ingin diupdate
     if (users_id) {
@@ -136,7 +193,7 @@ const updateProduct = async (req, res, next) => {
         price: price,
         description: description,
         product_images: product_images,
-        users_id: users_id,
+        status: status,
         categories_id: categories_id,
       },
       {
@@ -183,6 +240,7 @@ const deleteProduct = async (req, res, next) => {
 
 module.exports = {
   getAllProducts,
+  getAllMyProducts,
   getProductById,
   createProduct,
   updateProduct,

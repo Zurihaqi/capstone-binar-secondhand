@@ -1,6 +1,6 @@
 const router = require("express").Router();
 const { login, register } = require("./auth.route");
-const authorization = require("../middlewares/passport");
+const authentication = require("../middlewares/passport");
 const productRoutes = require("./product.route");
 const categoryRoutes = require("./category.route");
 const cityRoutes = require("./city.route");
@@ -14,8 +14,9 @@ const errorRoutes = require("./error.route");
 
 router.use(register);
 router.use(login);
-//authorization apa authentication ya? wkwk
-router.use(authorization);
+
+//! authentication yang bener
+router.use(authentication);
 
 router.use("/products", productRoutes);
 router.use("/cities", cityRoutes);

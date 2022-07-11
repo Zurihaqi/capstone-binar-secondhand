@@ -34,16 +34,26 @@ const getAllNotifications = async (req, res, next) => {
     if (skip ? (options.offset = +skip - 1) : delete options.offset);
     if (row ? (options.limit = +row) : delete options.limit);
 
+    //filtering by query
+    let params;
+    if (queries[0]) {
+      params = Object.keys(queries[0]);
+    }
     if (
       queries[0]
-        ? (options.where = { [Op.and]: queries })
+        ? (options.where = {
+            [params]: { [Op.iLike]: `%${Object.values(queries[0])}%` },
+          })
         : delete options.where
     );
 
-    const allNotifications = await Notification.findAll(options);
+    const allNotifications = await Notification.findAll({
+      ...options,
+      where: { users_id: req.user.id },
+    });
 
-    if (allNotifications[0] == null) {
-      throw errors.EMPTY_TABLE;
+    if (!allNotifications) {
+      throw errors.EMPTY_TABLE();
     }
     return res.status(200).json({
       status: "Successs",
@@ -56,10 +66,10 @@ const getAllNotifications = async (req, res, next) => {
 
 const getNotificationById = async (req, res, next) => {
   try {
-    const foundNotification = await Notification.findByPk(
-      req.params.id,
-      options
-    );
+    const foundNotification = await Notification.findByPk(req.params.id, {
+      ...options,
+      where: { users_id: req.user.id },
+    });
     if (foundNotification) {
       return res.status(200).json({
         status: "Success",
