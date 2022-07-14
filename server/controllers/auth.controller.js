@@ -28,7 +28,7 @@ module.exports = {
           cities_id: userRegistered.cities_id,
         };
         const token = jwt.sign(payload, JWT_SECRET, { expiresIn: "1h" });
-        return success.LOGIN_SUCCESS(res, token);
+        return success.LOGIN_SUCCESS(res, token, userRegistered.id);
       }
       throw errors.INVALID_CRED;
     } catch (error) {

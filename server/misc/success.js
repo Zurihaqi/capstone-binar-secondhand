@@ -22,9 +22,10 @@ module.exports = {
       status: `${table} with id ${id} deleted successfully`,
     });
   },
-  LOGIN_SUCCESS: (res, token) => {
+  LOGIN_SUCCESS: (res, token, id) => {
     return res.status(200).json({
       status: "Login success",
+      id: id,
       token: token,
     });
   },
