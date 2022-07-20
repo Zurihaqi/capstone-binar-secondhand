@@ -136,6 +136,12 @@ const createProduct = async (req, res, next) => {
 
     let status = "preview";
 
+    const query = req.query;
+
+    if ("publish" in query) {
+      status = "publish";
+    }
+
     //Cek apakah users_id atau categories_id ada dalam database sebelum membuat product
     const checkIfUserExist = await User.findByPk(users_id);
     const checkIfCategoryExist = await Category.findByPk(categories_id);
