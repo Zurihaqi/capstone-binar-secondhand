@@ -50,9 +50,9 @@ module.exports = {
       });
 
       //! Cek Error
-      if (!buyerExist) throw errors.NOT_FOUND("Buyer", buyer_id);
-      if (!sellerExist) throw errors.NOT_FOUND("seller", seller_id);
+      if (!buyerExist) throw errors.NOT_FOUND("Buyer", req.user.id);
       if (!productExist) throw errors.NOT_FOUND("Product", products_id);
+      if (!sellerExist) throw errors.NOT_FOUND("seller", productExist.users_id);
       if (tenderExist) throw errors.AVAILABLE_DATA("Tender", tenderExist.id);
       if (req.user.id === productExist.users_id)
         throw errors.TENDER_OWN_PRODUCT;
