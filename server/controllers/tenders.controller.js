@@ -1,4 +1,4 @@
-const { Tender, Product, User } = require("../db/models");
+const { Tender, Product, User, Category } = require("../db/models");
 const errors = require("../misc/errors");
 const success = require("../misc/success");
 
@@ -6,28 +6,25 @@ const options = {
   attributes: {
     exclude: ["createdAt", "updatedAt"],
   },
-  // include: [
-  //   {
-  //     model: User,
-  //     attributes: {
-  //       exclude: ["password", "createdAt", "updatedAt"],
-  //     },
-  //   },
-  //   {
-  //     model: Product,
-  //     attributes: {
-  //       exclude: ["createdAt", "updatedAt"],
-  //     },
-  //     include: [
-  //       {
-  //         model: User,
-  //         attributes: {
-  //           exclude: ["password", "createdAt", "updatedAt"],
-  //         },
-  //       },
-  //     ],
-  //   },
-  // ],
+  include: [
+    {
+      model: Product,
+      attributes: {
+        exclude: ["createdAt", "updatedAt"],
+      },
+      include: [
+        {
+          model: Category,
+        },
+        {
+          model: User,
+          attributes: {
+            exclude: ["password", "createdAt", "updatedAt"],
+          },
+        },
+      ],
+    },
+  ],
 };
 
 module.exports = {
