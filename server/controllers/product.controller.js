@@ -1,4 +1,11 @@
-const { Product, User, Category, City } = require("../db/models/");
+const {
+  Product,
+  User,
+  Category,
+  City,
+  Notification,
+} = require("../db/models/");
+const formatter = require("../helper/currencyFormatter");
 const Op = require("sequelize").Op;
 const errors = require("../misc/errors");
 const successMsg = require("../misc/success");
@@ -150,6 +157,14 @@ const createProduct = async (req, res, next) => {
     if (!checkIfCategoryExist)
       throw errors.NOT_FOUND("Category", categories_id);
 
+    /*
+    Note atribut notif
+    title: title,
+    description: description,
+    users_id: users_id,
+    products_id: products_id,
+    **/
+
     const productCreated = await Product.create({
       name: name,
       price: price,
@@ -159,7 +174,18 @@ const createProduct = async (req, res, next) => {
       users_id: users_id,
       categories_id: categories_id,
     });
-    if (productCreated) {
+    if (productCreated.status === "preview") {
+      return successMsg.CREATE_SUCCESS(res, "Product", productCreated);
+    }
+    if (productCreated.status === "publish") {
+      await Notification.create({
+        title: "Berhasil diterbitkan",
+        description: `${productCreated.name}<br>${formatter.format(
+          productCreated.price
+        )}<br>`,
+        users_id: req.user.id,
+        products_id: productCreated.id,
+      });
       return successMsg.CREATE_SUCCESS(res, "Product", productCreated);
     }
   } catch (error) {
