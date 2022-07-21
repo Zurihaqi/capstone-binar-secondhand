@@ -2,6 +2,7 @@ const { Tender, Product, User, Notification } = require("../db/models");
 const errors = require("../misc/errors");
 const success = require("../misc/success");
 const formatter = require("../helper/currencyFormatter");
+const { TENDER_OWN_PRODUCT } = require("../misc/errors");
 
 const options = {
   attributes: {
@@ -54,6 +55,7 @@ module.exports = {
       if (!sellerExist) throw errors.NOT_FOUND("seller", seller_id);
       if (!productExist) throw errors.NOT_FOUND("Product", products_id);
       if (tenderExist) throw errors.AVAILABLE_DATA("Tender", tenderExist.id);
+      if (req.user.id === productExist.users_id) throw TENDER_OWN_PRODUCT;
 
       const tender = await Tender.create({
         offer_status: offer_status,
