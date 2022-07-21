@@ -2,6 +2,7 @@ const { Product, User, Category, City } = require("../db/models/");
 const Op = require("sequelize").Op;
 const errors = require("../misc/errors");
 const successMsg = require("../misc/success");
+const { createNotification } = require("./notification.controller");
 
 const options = {
   include: [
@@ -159,6 +160,15 @@ const createProduct = async (req, res, next) => {
       users_id: users_id,
       categories_id: categories_id,
     });
+    if (status === "publish") {
+      req.body = {
+        title: "Produk berhasil di terbitkan",
+        description: `${name}<br>Rp ${price}`,
+        users_id: users_id,
+        products_id: productCreated.id,
+      };
+      return createNotification(req, res);
+    }
     if (productCreated) {
       return successMsg.CREATE_SUCCESS(res, "Product", productCreated);
     }
