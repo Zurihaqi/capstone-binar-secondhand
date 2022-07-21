@@ -1,6 +1,7 @@
-const { Tender, Product, User, Category } = require("../db/models");
+const { Tender, Product, User, Notification ,Category} = require("../db/models");
 const errors = require("../misc/errors");
 const success = require("../misc/success");
+const formatter = require("../helper/currencyFormatter");
 
 const options = {
   attributes: {
@@ -30,35 +31,47 @@ const options = {
 module.exports = {
   addTender: async (req, res, next) => {
     try {
-      const { offer_status, price, buyer_id, seller_id, products_id } =
-        req.body;
+      console.log(req.user.id);
+      const { offer_status, price, products_id } = req.body;
 
       //? Cek ketersediaan
-      const buyerExist = await User.findByPk(buyer_id);
-      const sellerExist = await User.findByPk(seller_id);
+      const buyerExist = await User.findByPk(req.user.id);
       const productExist = await Product.findByPk(products_id);
+      const sellerExist = await User.findByPk(productExist.users_id);
       const tenderExist = await Tender.findOne({
         where: {
-          buyer_id: buyer_id,
-          seller_id: seller_id,
+          buyer_id: req.user.id,
+          seller_id: productExist.users_id,
           products_id: products_id,
         },
       });
 
       //! Cek Error
-      if (!buyerExist) throw errors.NOT_FOUND("Buyer", buyer_id);
-      if (!sellerExist) throw errors.NOT_FOUND("seller", seller_id);
+      if (!buyerExist) throw errors.NOT_FOUND("Buyer", req.user.id);
       if (!productExist) throw errors.NOT_FOUND("Product", products_id);
+      if (!sellerExist) throw errors.NOT_FOUND("seller", productExist.users_id);
       if (tenderExist) throw errors.AVAILABLE_DATA("Tender", tenderExist.id);
+      if (req.user.id === productExist.users_id)
+        throw errors.TENDER_OWN_PRODUCT;
 
       const tender = await Tender.create({
         offer_status: offer_status,
         price: price,
-        buyer_id: buyer_id,
-        seller_id: seller_id,
+        buyer_id: req.user.id,
+        seller_id: productExist.users_id,
         products_id: products_id,
       });
-      return success.CREATE_SUCCESS(res, "Tender", tender);
+      if (tender) {
+        await Notification.create({
+          title: "Penawaran produk",
+          description: `${productExist.name}<br>${formatter.format(
+            productExist.price
+          )}<br>Ditawar ${formatter.format(tender.price)}`,
+          users_id: req.user.id,
+          products_id: tender.products_id,
+        });
+        return success.CREATE_SUCCESS(res, "Tender", tender);
+      }
     } catch (error) {
       next(error);
     }

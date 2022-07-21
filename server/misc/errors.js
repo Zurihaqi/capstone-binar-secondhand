@@ -60,4 +60,9 @@ module.exports = {
     "Error",
     "File exceeds upload limit. product_images: 4 images, photo_profile: 1 image"
   ),
+  TENDER_OWN_PRODUCT: new apiError(
+    401,
+    "Error",
+    "Cannot tender your own product."
+  ),
 };
