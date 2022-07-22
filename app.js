@@ -4,6 +4,7 @@ const app = express();
 const path = require("path");
 const logger = require("morgan");
 const open = require("open");
+const cors = require("cors");
 
 // call all module route here
 const router = require("./server/routes/app.routes");
@@ -13,6 +14,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, "public")));
 app.use(logger("combined"));
 
+app.use(cors());
 app.use("/api", router);
 app.use("/", (req, res) => {
   // opens the url in the default browser
