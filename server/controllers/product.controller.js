@@ -6,7 +6,6 @@ const {
   Notification,
 } = require("../db/models/");
 const formatter = require("../helper/currencyFormatter");
-const Sequelize = require("sequelize");
 const Op = require("sequelize").Op;
 const errors = require("../misc/errors");
 const successMsg = require("../misc/success");
