@@ -119,7 +119,7 @@ const getTransactionById = async (req, res, next) => {
 
 const createTransaction = async (req, res, next) => {
   try {
-    const { price, tender_id } = req.body;
+    const { tender_id } = req.body;
     let payment_status;
     const query = req.query;
 
@@ -155,7 +155,7 @@ const createTransaction = async (req, res, next) => {
     const transactionCreated = await Transaction.create({
       payment_status: payment_status,
       invoice_code: generated_invoice_code,
-      price: price,
+      price: checkIfTenderExist.price,
       buyer_id: req.user.id,
       seller_id: checkIfTenderExist.seller_id,
       tender_id: tender_id,
@@ -170,7 +170,7 @@ const createTransaction = async (req, res, next) => {
 
 const updateTransaction = async (req, res, next) => {
   try {
-    const { price, tender_id } = req.body;
+    const { tender_id } = req.body;
     const query = req.query;
     let payment_status;
 
@@ -202,7 +202,7 @@ const updateTransaction = async (req, res, next) => {
       {
         payment_status: payment_status,
         invoice_code: generated_invoice_code,
-        price: price,
+        // price: price,
         // buyer_id: req.user.id,
         // seller_id: seller_id,
         tender_id: tender_id,
