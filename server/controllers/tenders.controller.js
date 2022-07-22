@@ -9,6 +9,7 @@ const {
 const errors = require("../misc/errors");
 const success = require("../misc/success");
 const formatter = require("../helper/currencyFormatter");
+const invoice_code = require("../helper/generateInvoiceCode");
 
 const options = {
   attributes: {
@@ -40,18 +41,6 @@ module.exports = {
     try {
       const { price, products_id } = req.body;
 
-      let offer_status;
-
-      const query = req.query;
-
-      if ("accepted" in query) {
-        offer_status = "ACCEPTED";
-      } else if ("rejected" in query) {
-        offer_status = "REJECTED";
-      } else {
-        offer_status = "PENDING";
-      }
-
       //? Cek ketersediaan
       const buyerExist = await User.findByPk(req.user.id);
       const productExist = await Product.findByPk(products_id);
@@ -73,7 +62,7 @@ module.exports = {
         throw errors.TENDER_OWN_PRODUCT;
 
       const tender = await Tender.create({
-        offer_status: offer_status,
+        offer_status: "PENDING",
         price: price,
         buyer_id: req.user.id,
         seller_id: productExist.users_id,
@@ -99,7 +88,9 @@ module.exports = {
       const { id } = req.params;
       const { price } = req.body;
 
+      const tender = await Tender.findByPk(id, options);
       let offer_status;
+      let defaultPrice;
 
       const query = req.query;
 
@@ -110,41 +101,52 @@ module.exports = {
       } else {
         offer_status = "PENDING";
       }
+      //? Cek ketersediaan
+      // const buyerExist = await User.findByPk(buyer_id);
+      // const sellerExist = await User.findByPk(seller_id);
+      // const productExist = await Product.findByPk(products_id);
 
-      if (offer_status && price) {
-        //? Cek ketersediaan
-        // const buyerExist = await User.findByPk(buyer_id);
-        // const sellerExist = await User.findByPk(seller_id);
-        // const productExist = await Product.findByPk(products_id);
+      //! Cek Error
+      // if (!buyerExist) throw errors.NOT_FOUND("Buyer", buyer_id);
+      // if (!sellerExist) throw errors.NOT_FOUND("seller", seller_id);
+      // if (!productExist) throw errors.NOT_FOUND("Product", products_id);
 
-        //! Cek Error
-        // if (!buyerExist) throw errors.NOT_FOUND("Buyer", buyer_id);
-        // if (!sellerExist) throw errors.NOT_FOUND("seller", seller_id);
-        // if (!productExist) throw errors.NOT_FOUND("Product", products_id);
+      if (tender) {
+        //Jika tidak mengirimkan price pada body maka akan menggunakan tender.price
+        if (price ? (defaultPrice = +price) : (defaultPrice = tender.price));
 
-        await Tender.update(
+        //Error ketika tender sudah pernah disetujui sebelumnya dan ingin disetujui lagi (mencegah transaksi duplikat)
+        if (tender.offer_status === "ACCEPTED") {
+          if (tender.offer_status === offer_status)
+            throw errors.TENDER_ALREADY_ACCEPTED(id);
+        }
+
+        const updateTender = await Tender.update(
           {
             offer_status: offer_status,
-            price: price,
+            price: defaultPrice,
             // buyer_id: buyer_id,
             // seller_id: seller_id,
             // products_id: products_id,
           },
-          { where: { id: id } }
+          { where: { id: id }, returning: true, plain: true }
         );
-        const tender = await Tender.findByPk(id, options);
-
-        await Transaction.create({
-          payment_status: "PENDING",
-          invoice_code: invoice_code,
-          price: tender.price,
-          buyer_id: req.user.id,
-          seller_id: seller_id,
-          products_id: tender.products_id,
-        });
-
-        if (tender) {
-          return success.UPDATE_SUCCESS(res, "Tender", id, tender);
+        if (updateTender[1].dataValues.offer_status === "ACCEPTED") {
+          await Transaction.create({
+            payment_status: "PENDING",
+            invoice_code: invoice_code,
+            price: tender.price,
+            buyer_id: tender.buyer_id,
+            seller_id: tender.seller_id,
+            products_id: tender.products_id,
+          });
+          return success.UPDATE_SUCCESS(res, "Tender", id, updateTender[1]);
+        }
+        if (
+          updateTender[1].dataValues.offer_status === "REJECTED" ||
+          updateTender[1].dataValues.offer_status === "PENDING"
+        ) {
+          return success.UPDATE_SUCCESS(res, "Tender", id, updateTender[1]);
         }
       }
       throw errors.NOT_FOUND("Tender", id);
