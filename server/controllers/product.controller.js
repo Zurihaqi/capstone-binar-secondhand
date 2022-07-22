@@ -277,6 +277,7 @@ const updateProduct = async (req, res, next) => {
           id: req.params.id,
         },
         returning: true,
+        plain: true,
       }
     );
 
@@ -285,23 +286,23 @@ const updateProduct = async (req, res, next) => {
         res,
         "Product",
         req.params.id,
-        productUpdated
+        productUpdated[1]
       );
     }
     if (productUpdated[1].dataValues.status === "publish") {
       await Notification.create({
         title: "Berhasil diterbitkan",
-        description: `${productCreated.name}<br>${formatter.format(
-          productCreated.price
-        )}`,
+        description: `${
+          productUpdated[1].dataValues.name
+        }<br>${formatter.format(productUpdated[1].dataValues.price)}`,
         users_id: req.user.id,
-        products_id: productCreated.id,
+        products_id: productUpdated[1].dataValues.id,
       });
       return successMsg.UPDATE_SUCCESS(
         res,
         "Product",
         req.params.id,
-        productUpdated
+        productUpdated[1]
       );
     }
     throw errors.NOT_FOUND("Product", req.params.id);
