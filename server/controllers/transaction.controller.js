@@ -1,4 +1,5 @@
 const { Transaction, User, Product } = require("../db/models");
+const generateInvoiceCode = require("../helper/generateInvoiceCode");
 const Op = require("sequelize").Op;
 const errors = require("../misc/errors");
 const successMsg = require("../misc/success");
@@ -115,7 +116,7 @@ const createTransaction = async (req, res, next) => {
     const { payment_status, price, buyer_id, seller_id, products_id } =
       req.body;
 
-    const invoice_code = Math.random().toString(36).slice(-6).toUpperCase();
+    const invoice_code = generateInvoiceCode();
 
     const checkIfBuyerExist = await User.findByPk(buyer_id);
     if (!checkIfBuyerExist) throw errors.NOT_FOUND("User Buyer", buyer_id);

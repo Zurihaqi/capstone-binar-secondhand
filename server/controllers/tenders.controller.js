@@ -1,4 +1,11 @@
-const { Tender, Product, User, Notification } = require("../db/models");
+const {
+  Tender,
+  Product,
+  User,
+  Notification,
+  Category,
+  Transaction,
+} = require("../db/models");
 const errors = require("../misc/errors");
 const success = require("../misc/success");
 const formatter = require("../helper/currencyFormatter");
@@ -7,35 +14,43 @@ const options = {
   attributes: {
     exclude: ["createdAt", "updatedAt"],
   },
-  // include: [
-  //   {
-  //     model: User,
-  //     attributes: {
-  //       exclude: ["password", "createdAt", "updatedAt"],
-  //     },
-  //   },
-  //   {
-  //     model: Product,
-  //     attributes: {
-  //       exclude: ["createdAt", "updatedAt"],
-  //     },
-  //     include: [
-  //       {
-  //         model: User,
-  //         attributes: {
-  //           exclude: ["password", "createdAt", "updatedAt"],
-  //         },
-  //       },
-  //     ],
-  //   },
-  // ],
+  include: [
+    {
+      model: Product,
+      attributes: {
+        exclude: ["createdAt", "updatedAt"],
+      },
+      include: [
+        {
+          model: Category,
+        },
+        {
+          model: User,
+          attributes: {
+            exclude: ["password", "createdAt", "updatedAt"],
+          },
+        },
+      ],
+    },
+  ],
 };
 
 module.exports = {
   addTender: async (req, res, next) => {
     try {
-      console.log(req.user.id);
-      const { offer_status, price, products_id } = req.body;
+      const { price, products_id } = req.body;
+
+      let offer_status;
+
+      const query = req.query;
+
+      if ("accepted" in query) {
+        offer_status = "ACCEPTED";
+      } else if ("rejected" in query) {
+        offer_status = "REJECTED";
+      } else {
+        offer_status = "PENDING";
+      }
 
       //? Cek ketersediaan
       const buyerExist = await User.findByPk(req.user.id);
@@ -82,7 +97,19 @@ module.exports = {
   updateTender: async (req, res, next) => {
     try {
       const { id } = req.params;
-      const { offer_status, price } = req.body;
+      const { price } = req.body;
+
+      let offer_status;
+
+      const query = req.query;
+
+      if ("accepted" in query) {
+        offer_status = "ACCEPTED";
+      } else if ("rejected" in query) {
+        offer_status = "REJECTED";
+      } else {
+        offer_status = "PENDING";
+      }
 
       if (offer_status && price) {
         //? Cek ketersediaan
@@ -106,6 +133,16 @@ module.exports = {
           { where: { id: id } }
         );
         const tender = await Tender.findByPk(id, options);
+
+        await Transaction.create({
+          payment_status: "PENDING",
+          invoice_code: invoice_code,
+          price: tender.price,
+          buyer_id: req.user.id,
+          seller_id: seller_id,
+          products_id: tender.products_id,
+        });
+
         if (tender) {
           return success.UPDATE_SUCCESS(res, "Tender", id, tender);
         }
