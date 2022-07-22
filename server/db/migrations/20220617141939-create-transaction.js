@@ -41,11 +41,11 @@ module.exports = {
         },
         allowNull: false,
       },
-      products_id: {
+      tender_id: {
         type: Sequelize.DataTypes.INTEGER,
         references: {
           model: {
-            tableName: "Products",
+            tableName: "Tenders",
           },
           key: "id",
         },

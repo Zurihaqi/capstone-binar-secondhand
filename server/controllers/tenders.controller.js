@@ -138,7 +138,7 @@ module.exports = {
             price: tender.price,
             buyer_id: tender.buyer_id,
             seller_id: tender.seller_id,
-            products_id: tender.products_id,
+            tender_id: tender.id,
           });
           return success.UPDATE_SUCCESS(res, "Tender", id, updateTender[1]);
         }

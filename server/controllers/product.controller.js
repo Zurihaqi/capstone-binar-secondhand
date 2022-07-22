@@ -183,7 +183,7 @@ const createProduct = async (req, res, next) => {
         title: "Berhasil diterbitkan",
         description: `${productCreated.name}<br>${formatter.format(
           productCreated.price
-        )}<br>`,
+        )}`,
         users_id: req.user.id,
         products_id: productCreated.id,
       });
@@ -237,7 +237,23 @@ const updateProduct = async (req, res, next) => {
       }
     );
 
-    if (productUpdated) {
+    if (productUpdated[1].dataValues.status === "preview") {
+      return successMsg.UPDATE_SUCCESS(
+        res,
+        "Product",
+        req.params.id,
+        productUpdated
+      );
+    }
+    if (productUpdated[1].dataValues.status === "publish") {
+      await Notification.create({
+        title: "Berhasil diterbitkan",
+        description: `${productCreated.name}<br>${formatter.format(
+          productCreated.price
+        )}`,
+        users_id: req.user.id,
+        products_id: productCreated.id,
+      });
       return successMsg.UPDATE_SUCCESS(
         res,
         "Product",

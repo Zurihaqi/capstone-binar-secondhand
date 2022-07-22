@@ -17,19 +17,11 @@ module.exports = {
         photo_profile: eachUserData.photo_profile,
         phone: eachUserData.phone,
         address: eachUserData.address,
-        cities_id: eachUserData.city.toUpperCase(),
+        cities_id: eachUserData.cities_id,
         createdAt: new Date(),
         updatedAt: new Date(),
       };
     });
-    const findCity = await City.findOne({
-      where: { name: userData[0].cities_id },
-    });
-
-    if (findCity) {
-      userData[0].cities_id = findCity.id;
-    }
-
     await queryInterface.bulkInsert("Users", userData);
   },
 
