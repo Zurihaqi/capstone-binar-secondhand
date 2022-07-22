@@ -1,4 +1,11 @@
-const { Product, User, Category, City } = require("../db/models/");
+const {
+  Product,
+  User,
+  Category,
+  City,
+  Notification,
+} = require("../db/models/");
+const formatter = require("../helper/currencyFormatter");
 const Op = require("sequelize").Op;
 const errors = require("../misc/errors");
 const successMsg = require("../misc/success");
@@ -33,8 +40,18 @@ const getAllProducts = async (req, res, next) => {
     let { skip, row } = req.query;
 
     let queries = [];
+    let integerQueries = [];
     for (const [key, value] of Object.entries(req.query)) {
-      if (key != "skip" && key != "row") queries.push({ [key]: value });
+      if (
+        key !== "skip" &&
+        key !== "row" &&
+        key !== "categories_id" &&
+        key !== "price" &&
+        key !== "users_id"
+      )
+        queries.push({ [key]: value });
+      if (key === "categories_id" || key === "price" || key === "users_id")
+        integerQueries.push({ [key]: value });
     }
 
     //pagination, row = limit, skip = offset
@@ -53,10 +70,22 @@ const getAllProducts = async (req, res, next) => {
     if (
       queries[0]
         ? (options.where = {
-            ...options.where,
             [params]: { [Op.iLike]: `%${Object.values(queries[0])}%` },
           })
-        : delete options.where.params
+        : delete options.where
+    );
+    if (
+      integerQueries[0]
+        ? (options.where = {
+            [Op.or]: [
+              {
+                [Object.keys(integerQueries[0])]: Object.values(
+                  integerQueries[0]
+                ),
+              },
+            ],
+          })
+        : delete options.where
     );
 
     //console.log(options);
@@ -76,8 +105,18 @@ const getAllMyProducts = async (req, res, next) => {
     let { skip, row } = req.query;
 
     let queries = [];
+    let integerQueries = [];
     for (const [key, value] of Object.entries(req.query)) {
-      if (key != "skip" && key != "row") queries.push({ [key]: value });
+      if (
+        key !== "skip" &&
+        key !== "row" &&
+        key !== "categories_id" &&
+        key !== "price" &&
+        key !== "users_id"
+      )
+        queries.push({ [key]: value });
+      if (key === "categories_id" || key === "price" || key === "users_id")
+        integerQueries.push({ [key]: value });
     }
 
     //pagination, row = limit, skip = offset
@@ -96,10 +135,22 @@ const getAllMyProducts = async (req, res, next) => {
     if (
       queries[0]
         ? (options.where = {
-            ...options.where,
             [params]: { [Op.iLike]: `%${Object.values(queries[0])}%` },
           })
-        : delete options.where.params
+        : delete options.where
+    );
+    if (
+      integerQueries[0]
+        ? (options.where = {
+            [Op.or]: [
+              {
+                [Object.keys(integerQueries[0])]: Object.values(
+                  integerQueries[0]
+                ),
+              },
+            ],
+          })
+        : delete options.where
     );
 
     //console.log(options);
@@ -150,6 +201,14 @@ const createProduct = async (req, res, next) => {
     if (!checkIfCategoryExist)
       throw errors.NOT_FOUND("Category", categories_id);
 
+    /*
+    Note atribut notif
+    title: title,
+    description: description,
+    users_id: users_id,
+    products_id: products_id,
+    **/
+
     const productCreated = await Product.create({
       name: name,
       price: price,
@@ -159,7 +218,18 @@ const createProduct = async (req, res, next) => {
       users_id: users_id,
       categories_id: categories_id,
     });
-    if (productCreated) {
+    if (productCreated.status === "preview") {
+      return successMsg.CREATE_SUCCESS(res, "Product", productCreated);
+    }
+    if (productCreated.status === "publish") {
+      await Notification.create({
+        title: "Berhasil diterbitkan",
+        description: `${productCreated.name}<br>${formatter.format(
+          productCreated.price
+        )}`,
+        users_id: req.user.id,
+        products_id: productCreated.id,
+      });
       return successMsg.CREATE_SUCCESS(res, "Product", productCreated);
     }
   } catch (error) {
@@ -207,15 +277,32 @@ const updateProduct = async (req, res, next) => {
           id: req.params.id,
         },
         returning: true,
+        plain: true,
       }
     );
 
-    if (productUpdated) {
+    if (productUpdated[1].dataValues.status === "preview") {
       return successMsg.UPDATE_SUCCESS(
         res,
         "Product",
         req.params.id,
-        productUpdated
+        productUpdated[1]
+      );
+    }
+    if (productUpdated[1].dataValues.status === "publish") {
+      await Notification.create({
+        title: "Berhasil diterbitkan",
+        description: `${
+          productUpdated[1].dataValues.name
+        }<br>${formatter.format(productUpdated[1].dataValues.price)}`,
+        users_id: req.user.id,
+        products_id: productUpdated[1].dataValues.id,
+      });
+      return successMsg.UPDATE_SUCCESS(
+        res,
+        "Product",
+        req.params.id,
+        productUpdated[1]
       );
     }
     throw errors.NOT_FOUND("Product", req.params.id);

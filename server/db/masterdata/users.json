@@ -1,11 +1,12 @@
 [
   {
-    "name": "Zul",
-    "email": "zul@mail.com",
-    "password": "zulpass",
-    "photo_profile": "profilepic.png",
-    "phone": "08123456789",
-    "address": "Jl. jalan",
-    "city": "Bekasi"
+    "name": "Seller",
+    "email": "seller@mail.com",
+    "password": "seller1234"
+  },
+  {
+    "name": "Buyer",
+    "email": "buyer@mail.com",
+    "password": "buyer1234"
   }
 ]

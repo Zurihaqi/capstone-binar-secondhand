@@ -8,10 +8,11 @@ const {
   updateTender,
   deleteTenderById,
   getAllSellerTenders,
+  getAllBuyerTenders,
 } = require("../controllers/tenders.controller");
 
 router.get("/seller", getAllSellerTenders);
-router.get("/buyer", getAllSellerTenders);
+router.get("/buyer", getAllBuyerTenders);
 router.get("/:id", validation.getTenderById(), validate, getTenderById);
 router.post("/", validation.createTender(), validate, addTender);
 router.patch("/:id", validation.updateTender(), validate, updateTender);

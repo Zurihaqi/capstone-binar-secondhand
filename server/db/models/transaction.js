@@ -15,8 +15,8 @@ module.exports = (sequelize, DataTypes) => {
       Transaction.belongsTo(models.User, {
         foreignKey: "seller_id",
       });
-      Transaction.belongsTo(models.Product, {
-        foreignKey: "products_id",
+      Transaction.belongsTo(models.Tender, {
+        foreignKey: "tender_id",
       });
     }
   }
@@ -28,7 +28,7 @@ module.exports = (sequelize, DataTypes) => {
       price: DataTypes.INTEGER,
       buyer_id: DataTypes.INTEGER,
       seller_id: DataTypes.INTEGER,
-      products_id: DataTypes.INTEGER,
+      tender_id: DataTypes.INTEGER,
     },
     {
       sequelize,

@@ -7,31 +7,31 @@ module.exports = {
   },
   CREATE_SUCCESS: (res, table, data) => {
     return res.status(201).json({
-      status: `${table} created successfully`,
+      status: `Success`,
       data: data,
     });
   },
   UPDATE_SUCCESS: (res, table, id, data) => {
     return res.status(201).json({
-      status: `${table} with id ${id} updated successfully`,
+      status: `Success`,
       data: data,
     });
   },
   DELETE_SUCCESS: (res, table, id) => {
     return res.status(200).json({
-      status: `${table} with id ${id} deleted successfully`,
+      status: `Success`,
     });
   },
   LOGIN_SUCCESS: (res, token, id) => {
     return res.status(200).json({
-      status: "Login success",
+      status: "Success",
       id: id,
       token: token,
     });
   },
   REGISTER_SUCCESS: (res, data) => {
     return res.status(201).json({
-      status: "Register success",
+      status: "Success",
       data: data,
     });
   },

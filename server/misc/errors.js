@@ -60,4 +60,22 @@ module.exports = {
     "Error",
     "File exceeds upload limit. product_images: 4 images, photo_profile: 1 image"
   ),
+  TENDER_OWN_PRODUCT: new apiError(
+    401,
+    "Error",
+    "Cannot tender your own product."
+  ),
+  TENDER_ALREADY_ACCEPTED: (id) => {
+    const error = new apiError(
+      401,
+      "Error",
+      `Tender with id ${id} is already accepted`
+    );
+    return error;
+  },
+  INVALID_PAYMENT_STATUS: new apiError(
+    401,
+    "Error",
+    "payment_status is invalid. Enter 'PAID', 'PENDING' or 'FAILED'"
+  ),
 };
