@@ -6,10 +6,10 @@ const {
   Notification,
 } = require("../db/models/");
 const formatter = require("../helper/currencyFormatter");
+const Sequelize = require("sequelize");
 const Op = require("sequelize").Op;
 const errors = require("../misc/errors");
 const successMsg = require("../misc/success");
-const { createNotification } = require("./notification.controller");
 
 const options = {
   include: [
@@ -41,8 +41,18 @@ const getAllProducts = async (req, res, next) => {
     let { skip, row } = req.query;
 
     let queries = [];
+    let integerQueries = [];
     for (const [key, value] of Object.entries(req.query)) {
-      if (key != "skip" && key != "row") queries.push({ [key]: value });
+      if (
+        key !== "skip" &&
+        key !== "row" &&
+        key !== "categories_id" &&
+        key !== "price" &&
+        key !== "users_id"
+      )
+        queries.push({ [key]: value });
+      if (key === "categories_id" || key === "price" || key === "users_id")
+        integerQueries.push({ [key]: value });
     }
 
     //pagination, row = limit, skip = offset
@@ -61,10 +71,22 @@ const getAllProducts = async (req, res, next) => {
     if (
       queries[0]
         ? (options.where = {
-            ...options.where,
             [params]: { [Op.iLike]: `%${Object.values(queries[0])}%` },
           })
-        : delete options.where.params
+        : delete options.where
+    );
+    if (
+      integerQueries[0]
+        ? (options.where = {
+            [Op.or]: [
+              {
+                [Object.keys(integerQueries[0])]: Object.values(
+                  integerQueries[0]
+                ),
+              },
+            ],
+          })
+        : delete options.where
     );
 
     //console.log(options);
@@ -84,8 +106,18 @@ const getAllMyProducts = async (req, res, next) => {
     let { skip, row } = req.query;
 
     let queries = [];
+    let integerQueries = [];
     for (const [key, value] of Object.entries(req.query)) {
-      if (key != "skip" && key != "row") queries.push({ [key]: value });
+      if (
+        key !== "skip" &&
+        key !== "row" &&
+        key !== "categories_id" &&
+        key !== "price" &&
+        key !== "users_id"
+      )
+        queries.push({ [key]: value });
+      if (key === "categories_id" || key === "price" || key === "users_id")
+        integerQueries.push({ [key]: value });
     }
 
     //pagination, row = limit, skip = offset
@@ -104,10 +136,22 @@ const getAllMyProducts = async (req, res, next) => {
     if (
       queries[0]
         ? (options.where = {
-            ...options.where,
             [params]: { [Op.iLike]: `%${Object.values(queries[0])}%` },
           })
-        : delete options.where.params
+        : delete options.where
+    );
+    if (
+      integerQueries[0]
+        ? (options.where = {
+            [Op.or]: [
+              {
+                [Object.keys(integerQueries[0])]: Object.values(
+                  integerQueries[0]
+                ),
+              },
+            ],
+          })
+        : delete options.where
     );
 
     //console.log(options);
