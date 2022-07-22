@@ -21,7 +21,7 @@ app.use("/", (req, res) => {
   // open("https://documenter.getpostman.com/view/13273250/UzJFweL2");
   res.json({
     message:
-      "Selamat Datang di API SecondHand, Silhakan cek dokumentasi disini: https://documenter.getpostman.com/view/13273250/UzJFweL2",
+      "Selamat Datang di API SecondHand, Silhakan cek dokumentasi disini: https://documenter.getpostman.com/view/20277894/UzXKVy2P",
   });
 });
 
