@@ -65,4 +65,12 @@ module.exports = {
     "Error",
     "Cannot tender your own product."
   ),
+  TENDER_ALREADY_ACCEPTED: (id) => {
+    const error = new apiError(
+      401,
+      "Error",
+      `Tender with id ${id} is already accepted`
+    );
+    return error;
+  },
 };
