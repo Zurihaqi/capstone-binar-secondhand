@@ -78,7 +78,7 @@ const getAllTransactionAsSeller = async (req, res, next) => {
     const allTransaction = await Transaction.findAll(options);
 
     if (allTransaction[0] == null) {
-      throw errors.EMPTY_TABLE("Transaction");
+      throw errors.EMPTY_TABLE("Seller transaction");
     }
     return successMsg.GET_SUCCESS(res, allTransaction);
   } catch (error) {
@@ -99,7 +99,7 @@ const getAllTransactionAsBuyer = async (req, res, next) => {
     const allTransaction = await Transaction.findAll(options);
 
     if (allTransaction[0] == null) {
-      throw errors.EMPTY_TABLE("Transaction");
+      throw errors.EMPTY_TABLE("Buyer transaction");
     }
     return successMsg.GET_SUCCESS(res, allTransaction);
   } catch (error) {
