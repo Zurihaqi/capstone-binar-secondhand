@@ -53,6 +53,17 @@ const getAllProducts = async (req, res, next) => {
       if (key === "categories_id" || key === "price" || key === "users_id")
         integerQueries.push({ [key]: value });
     }
+    if (queries.length != 0) {
+      if (Object.keys(queries[0]) == "categories_name") {
+        const category = await Category.findOne({
+          where: { name: Object.values(queries[0]) },
+        });
+        if (category) {
+          integerQueries = [{ categories_id: category.id }];
+        }
+        if (!category) throw errors.EMPTY_TABLE("Product");
+      }
+    }
 
     //pagination, row = limit, skip = offset
     if (skip ? (options.offset = +skip - 1) : delete options.offset);
@@ -117,6 +128,17 @@ const getAllMyProducts = async (req, res, next) => {
         queries.push({ [key]: value });
       if (key === "categories_id" || key === "price" || key === "users_id")
         integerQueries.push({ [key]: value });
+    }
+    if (queries.length != 0) {
+      if (Object.keys(queries[0]) == "categories_name") {
+        const category = await Category.findOne({
+          where: { name: Object.values(queries[0]) },
+        });
+        if (category) {
+          integerQueries = [{ categories_id: category.id }];
+        }
+        if (!category) throw errors.EMPTY_TABLE("Product");
+      }
     }
 
     //pagination, row = limit, skip = offset
