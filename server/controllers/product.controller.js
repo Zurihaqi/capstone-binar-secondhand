@@ -264,8 +264,6 @@ const updateProduct = async (req, res, next) => {
     const { name, price, description, categories_id, product_images } =
       req.body;
 
-    const users_id = req.user.id;
-
     let status = "preview";
 
     const query = req.query;
@@ -274,11 +272,9 @@ const updateProduct = async (req, res, next) => {
       status = "publish";
     }
 
-    //hanya cek apabila user atau category id ingin diupdate
-    if (users_id) {
-      const checkIfUserExist = await User.findByPk(users_id);
-      if (!checkIfUserExist) throw errors.NOT_FOUND("User", users_id);
-    }
+    const checkIfProductExist = await Product.findByPk(req.params.id);
+    if (!checkIfProductExist)
+      throw errors.NOT_FOUND("Transaction", req.params.id);
     if (categories_id) {
       const checkIfCategoryExist = await Category.findByPk(categories_id);
       if (!checkIfCategoryExist)
