@@ -273,8 +273,7 @@ const updateProduct = async (req, res, next) => {
     }
 
     const checkIfProductExist = await Product.findByPk(req.params.id);
-    if (!checkIfProductExist)
-      throw errors.NOT_FOUND("Transaction", req.params.id);
+    if (!checkIfProductExist) throw errors.NOT_FOUND("Product", req.params.id);
     if (categories_id) {
       const checkIfCategoryExist = await Category.findByPk(categories_id);
       if (!checkIfCategoryExist)
