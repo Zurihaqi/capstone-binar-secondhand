@@ -55,7 +55,6 @@ const getAllProducts = async (req, res, next) => {
     }
     if (queries.length != 0) {
       if (Object.keys(queries[0]) == "categories_name") {
-        console.log(Object.values(queries[0]));
         const category = await Category.findOne({
           where: { name: Object.values(queries[0]) },
         });
@@ -97,8 +96,10 @@ const getAllProducts = async (req, res, next) => {
     );
 
     options.where = {
+      ...options.where,
       status: "publish",
     };
+    console.log(integerQueries[0]);
 
     const allProducts = await Product.findAll(options);
     //error handler ketika tabel kosong
