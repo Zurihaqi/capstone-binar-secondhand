@@ -87,7 +87,7 @@ module.exports = {
           description: `${productExist.name}<br>${formatter.format(
             productExist.price
           )}<br>Ditawar ${formatter.format(tender.price)}`,
-          users_id: req.user.id,
+          users_id: productExist.users_id,
           products_id: tender.products_id,
         });
         return success.CREATE_SUCCESS(res, "Tender", tender);
