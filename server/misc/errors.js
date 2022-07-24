@@ -73,4 +73,9 @@ module.exports = {
     );
     return error;
   },
+  INVALID_PAYMENT_STATUS: new apiError(
+    401,
+    "Error",
+    "payment_status is invalid. Enter 'PAID', 'PENDING' or 'FAILED'"
+  ),
 };

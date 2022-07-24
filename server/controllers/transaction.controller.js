@@ -1,5 +1,11 @@
-const { Transaction, User, Product } = require("../db/models");
-const generateInvoiceCode = require("../helper/generateInvoiceCode");
+const {
+  Transaction,
+  User,
+  Product,
+  Notification,
+  Tender,
+} = require("../db/models");
+const generated_invoice_code = require("../helper/generateInvoiceCode");
 const Op = require("sequelize").Op;
 const errors = require("../misc/errors");
 const successMsg = require("../misc/success");
@@ -13,7 +19,7 @@ const options = {
       },
     },
     {
-      model: Product,
+      model: Tender,
       attributes: {
         exclude: ["createdAt", "updatedAt"],
       },
@@ -72,7 +78,7 @@ const getAllTransactionAsSeller = async (req, res, next) => {
     const allTransaction = await Transaction.findAll(options);
 
     if (allTransaction[0] == null) {
-      throw errors.EMPTY_TABLE("Transaction");
+      throw errors.EMPTY_TABLE("Seller transaction");
     }
     return successMsg.GET_SUCCESS(res, allTransaction);
   } catch (error) {
@@ -93,7 +99,7 @@ const getAllTransactionAsBuyer = async (req, res, next) => {
     const allTransaction = await Transaction.findAll(options);
 
     if (allTransaction[0] == null) {
-      throw errors.EMPTY_TABLE("Transaction");
+      throw errors.EMPTY_TABLE("Buyer transaction");
     }
     return successMsg.GET_SUCCESS(res, allTransaction);
   } catch (error) {
@@ -113,27 +119,46 @@ const getTransactionById = async (req, res, next) => {
 
 const createTransaction = async (req, res, next) => {
   try {
-    const { payment_status, price, buyer_id, seller_id, products_id } =
-      req.body;
+    const { tender_id } = req.body;
+    let payment_status;
+    const query = req.query;
 
-    const invoice_code = generateInvoiceCode();
+    if ("pending" in query) {
+      payment_status = "PENDING";
+    }
+    if ("paid" in query) {
+      payment_status = "PAID";
+    }
+    if ("failed" in query) {
+      payment_status = "FAILED";
+    }
 
-    const checkIfBuyerExist = await User.findByPk(buyer_id);
-    if (!checkIfBuyerExist) throw errors.NOT_FOUND("User Buyer", buyer_id);
+    if (
+      payment_status !== "PENDING" &&
+      payment_status !== "PAID" &&
+      payment_status !== "FAILED"
+    ) {
+      throw errors.INVALID_PAYMENT_STATUS;
+    }
 
-    const checkIfSellerExist = await User.findByPk(seller_id);
-    if (!checkIfSellerExist) throw errors.NOT_FOUND("User Seller", seller_id);
-
-    const checkIfProductExist = await Product.findByPk(products_id);
-    if (!checkIfProductExist) throw errors.NOT_FOUND("Product", products_id);
+    const checkIfTenderExist = await Tender.findByPk(tender_id);
+    if (!checkIfTenderExist) throw errors.NOT_FOUND("Tender", tender_id);
+    const checkIfTenderExistInTransaction = await Transaction.findOne({
+      where: { tender_id: tender_id },
+    });
+    if (checkIfTenderExistInTransaction)
+      throw errors.AVAILABLE_DATA(
+        "Transaction",
+        checkIfTenderExistInTransaction.id
+      );
 
     const transactionCreated = await Transaction.create({
       payment_status: payment_status,
-      invoice_code: invoice_code,
-      price: price,
-      buyer_id: buyer_id,
-      seller_id: seller_id,
-      products_id: products_id,
+      invoice_code: generated_invoice_code,
+      price: checkIfTenderExist.price,
+      buyer_id: req.user.id,
+      seller_id: checkIfTenderExist.seller_id,
+      tender_id: tender_id,
     });
 
     if (transactionCreated)
@@ -145,51 +170,77 @@ const createTransaction = async (req, res, next) => {
 
 const updateTransaction = async (req, res, next) => {
   try {
-    const {
-      payment_status,
-      invoice_code,
-      price,
-      buyer_id,
-      seller_id,
-      products_id,
-    } = req.body;
+    const { tender_id } = req.body;
+    const query = req.query;
+    let payment_status;
 
-    if (buyer_id) {
-      const checkIfBuyerExist = await User.findByPk(buyer_id);
-      if (!checkIfBuyerExist) throw errors.NOT_FOUND("User Buyer", buyer_id);
+    const checkIfTransactionExist = await Transaction.findByPk(req.params.id);
+    if (!checkIfTransactionExist)
+      throw errors.NOT_FOUND("Transaction", req.params.id);
+    const checkIfTenderExist = await Tender.findByPk(tender_id);
+    if (!checkIfTenderExist) throw errors.NOT_FOUND("Tender", tender_id);
+
+    if ("pending" in query) {
+      payment_status = "PENDING";
+    } else if ("paid" in query) {
+      payment_status = "PAID";
+    } else if ("failed" in query) {
+      payment_status = "FAILED";
     }
-    if (seller_id) {
-      const checkIfSellerExist = await User.findByPk(seller_id);
-      if (!checkIfSellerExist) throw errors.NOT_FOUND("User Seller", seller_id);
+
+    if (
+      payment_status !== "PENDING" &&
+      payment_status !== "PAID" &&
+      payment_status !== "FAILED"
+    ) {
+      throw errors.INVALID_PAYMENT_STATUS;
     }
-    if (products_id) {
-      const checkIfProductExist = await Product.findByPk(products_id);
-      if (!checkIfProductExist) throw errors.NOT_FOUND("Product", products_id);
-    }
+
+    console.log(payment_status);
 
     const transactionUpdated = await Transaction.update(
       {
         payment_status: payment_status,
-        invoice_code: invoice_code,
-        price: price,
-        buyer_id: buyer_id,
-        seller_id: seller_id,
-        products_id: products_id,
+        invoice_code: generated_invoice_code,
+        // price: price,
+        // buyer_id: req.user.id,
+        // seller_id: seller_id,
+        tender_id: tender_id,
       },
       {
         where: {
           id: req.params.id,
         },
         returning: true,
+        plain: true,
       }
     );
-    if (transactionUpdated)
+    if (transactionUpdated) {
+      const product = await Product.findByPk(checkIfTenderExist.products_id);
+      console.log(checkIfTenderExist);
+      if (transactionUpdated[1].dataValues.payment_status === "PAID") {
+        await Notification.create({
+          title: "Berhasil terjual",
+          description: `${product.name}<br>${formatter.format(product.price)}`,
+          users_id: req.user.id,
+          products_id: product.id,
+        });
+      }
+      if (transactionUpdated[1].dataValues.payment_status === "FAILED") {
+        await Notification.create({
+          title: "Transaksi dibatalkan",
+          description: `${product.name}<br>${formatter.format(product.price)}`,
+          users_id: req.user.id,
+          products_id: product.id,
+        });
+      }
       return successMsg.UPDATE_SUCCESS(
         res,
         "Transaction",
         req.params.id,
         transactionUpdated
       );
+    }
     throw errors.NOT_FOUND("Transaction", req.params.id);
   } catch (error) {
     next(error);

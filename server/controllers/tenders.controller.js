@@ -138,7 +138,7 @@ module.exports = {
             price: tender.price,
             buyer_id: tender.buyer_id,
             seller_id: tender.seller_id,
-            products_id: tender.products_id,
+            tender_id: tender.id,
           });
           return success.UPDATE_SUCCESS(res, "Tender", id, updateTender[1]);
         }
@@ -179,10 +179,10 @@ module.exports = {
           seller_id: user.id,
         },
       });
-      if (tenders) {
+      if (tenders.length) {
         return success.GET_SUCCESS(res, tenders);
       }
-      throw errors.EMPTY_TABLE("Tender");
+      throw errors.EMPTY_TABLE("Seller tender");
     } catch (error) {
       next(error);
     }
@@ -197,10 +197,10 @@ module.exports = {
           buyer_id: user.id,
         },
       });
-      if (tenders) {
+      if (tenders.length) {
         return success.GET_SUCCESS(res, tenders);
       }
-      throw errors.EMPTY_TABLE("Tender");
+      throw errors.EMPTY_TABLE("Buyer tender");
     } catch (error) {
       next(error);
     }
@@ -209,7 +209,7 @@ module.exports = {
     try {
       const { id } = req.params;
       const tender = await Tender.findByPk(id, options);
-      if (tender) {
+      if (tender.length) {
         return success.GET_SUCCESS(res, tender);
       }
       throw errors.NOT_FOUND("Tender", id);

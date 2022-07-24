@@ -9,7 +9,6 @@ const formatter = require("../helper/currencyFormatter");
 const Op = require("sequelize").Op;
 const errors = require("../misc/errors");
 const successMsg = require("../misc/success");
-const { createNotification } = require("./notification.controller");
 
 const options = {
   include: [
@@ -41,8 +40,29 @@ const getAllProducts = async (req, res, next) => {
     let { skip, row } = req.query;
 
     let queries = [];
+    let integerQueries = [];
     for (const [key, value] of Object.entries(req.query)) {
-      if (key != "skip" && key != "row") queries.push({ [key]: value });
+      if (
+        key !== "skip" &&
+        key !== "row" &&
+        key !== "categories_id" &&
+        key !== "price" &&
+        key !== "users_id"
+      )
+        queries.push({ [key]: value });
+      if (key === "categories_id" || key === "price" || key === "users_id")
+        integerQueries.push({ [key]: value });
+    }
+    if (queries.length != 0) {
+      if (Object.keys(queries[0]) == "categories_name") {
+        const category = await Category.findOne({
+          where: { name: Object.values(queries[0]) },
+        });
+        if (category) {
+          integerQueries = [{ categories_id: category.id }];
+        }
+        if (!category) throw errors.EMPTY_TABLE("Product");
+      }
     }
 
     //pagination, row = limit, skip = offset
@@ -61,10 +81,22 @@ const getAllProducts = async (req, res, next) => {
     if (
       queries[0]
         ? (options.where = {
-            ...options.where,
             [params]: { [Op.iLike]: `%${Object.values(queries[0])}%` },
           })
-        : delete options.where.params
+        : delete options.where
+    );
+    if (
+      integerQueries[0]
+        ? (options.where = {
+            [Op.or]: [
+              {
+                [Object.keys(integerQueries[0])]: Object.values(
+                  integerQueries[0]
+                ),
+              },
+            ],
+          })
+        : delete options.where
     );
 
     //console.log(options);
@@ -84,8 +116,29 @@ const getAllMyProducts = async (req, res, next) => {
     let { skip, row } = req.query;
 
     let queries = [];
+    let integerQueries = [];
     for (const [key, value] of Object.entries(req.query)) {
-      if (key != "skip" && key != "row") queries.push({ [key]: value });
+      if (
+        key !== "skip" &&
+        key !== "row" &&
+        key !== "categories_id" &&
+        key !== "price" &&
+        key !== "users_id"
+      )
+        queries.push({ [key]: value });
+      if (key === "categories_id" || key === "price" || key === "users_id")
+        integerQueries.push({ [key]: value });
+    }
+    if (queries.length != 0) {
+      if (Object.keys(queries[0]) == "categories_name") {
+        const category = await Category.findOne({
+          where: { name: Object.values(queries[0]) },
+        });
+        if (category) {
+          integerQueries = [{ categories_id: category.id }];
+        }
+        if (!category) throw errors.EMPTY_TABLE("Product");
+      }
     }
 
     //pagination, row = limit, skip = offset
@@ -104,10 +157,22 @@ const getAllMyProducts = async (req, res, next) => {
     if (
       queries[0]
         ? (options.where = {
-            ...options.where,
             [params]: { [Op.iLike]: `%${Object.values(queries[0])}%` },
           })
-        : delete options.where.params
+        : delete options.where
+    );
+    if (
+      integerQueries[0]
+        ? (options.where = {
+            [Op.or]: [
+              {
+                [Object.keys(integerQueries[0])]: Object.values(
+                  integerQueries[0]
+                ),
+              },
+            ],
+          })
+        : delete options.where
     );
 
     //console.log(options);
@@ -183,7 +248,7 @@ const createProduct = async (req, res, next) => {
         title: "Berhasil diterbitkan",
         description: `${productCreated.name}<br>${formatter.format(
           productCreated.price
-        )}<br>`,
+        )}`,
         users_id: req.user.id,
         products_id: productCreated.id,
       });
@@ -199,8 +264,6 @@ const updateProduct = async (req, res, next) => {
     const { name, price, description, categories_id, product_images } =
       req.body;
 
-    const users_id = req.user.id;
-
     let status = "preview";
 
     const query = req.query;
@@ -209,11 +272,8 @@ const updateProduct = async (req, res, next) => {
       status = "publish";
     }
 
-    //hanya cek apabila user atau category id ingin diupdate
-    if (users_id) {
-      const checkIfUserExist = await User.findByPk(users_id);
-      if (!checkIfUserExist) throw errors.NOT_FOUND("User", users_id);
-    }
+    const checkIfProductExist = await Product.findByPk(req.params.id);
+    if (!checkIfProductExist) throw errors.NOT_FOUND("Product", req.params.id);
     if (categories_id) {
       const checkIfCategoryExist = await Category.findByPk(categories_id);
       if (!checkIfCategoryExist)
@@ -234,15 +294,32 @@ const updateProduct = async (req, res, next) => {
           id: req.params.id,
         },
         returning: true,
+        plain: true,
       }
     );
 
-    if (productUpdated) {
+    if (productUpdated[1].dataValues.status === "preview") {
       return successMsg.UPDATE_SUCCESS(
         res,
         "Product",
         req.params.id,
-        productUpdated
+        productUpdated[1]
+      );
+    }
+    if (productUpdated[1].dataValues.status === "publish") {
+      await Notification.create({
+        title: "Berhasil diterbitkan",
+        description: `${
+          productUpdated[1].dataValues.name
+        }<br>${formatter.format(productUpdated[1].dataValues.price)}`,
+        users_id: req.user.id,
+        products_id: productUpdated[1].dataValues.id,
+      });
+      return successMsg.UPDATE_SUCCESS(
+        res,
+        "Product",
+        req.params.id,
+        productUpdated[1]
       );
     }
     throw errors.NOT_FOUND("Product", req.params.id);
