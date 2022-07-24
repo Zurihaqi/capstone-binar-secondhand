@@ -55,6 +55,7 @@ const getAllProducts = async (req, res, next) => {
     }
     if (queries.length != 0) {
       if (Object.keys(queries[0]) == "categories_name") {
+        console.log(Object.values(queries[0]));
         const category = await Category.findOne({
           where: { name: Object.values(queries[0]) },
         });
@@ -68,10 +69,6 @@ const getAllProducts = async (req, res, next) => {
     //pagination, row = limit, skip = offset
     if (skip ? (options.offset = +skip - 1) : delete options.offset);
     if (row ? (options.limit = +row) : delete options.limit);
-
-    options.where = {
-      status: "publish",
-    };
 
     //filtering by query
     let params;
@@ -99,7 +96,9 @@ const getAllProducts = async (req, res, next) => {
         : delete options.where
     );
 
-    //console.log(options);
+    options.where = {
+      status: "publish",
+    };
 
     const allProducts = await Product.findAll(options);
     //error handler ketika tabel kosong
