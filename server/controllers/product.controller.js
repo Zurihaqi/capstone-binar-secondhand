@@ -220,6 +220,14 @@ const createProduct = async (req, res, next) => {
     if (!checkIfCategoryExist)
       throw errors.NOT_FOUND("Category", categories_id);
 
+    const limitUserProduct = await Product.findAndCountAll({
+      where: { users_id: req.user.id },
+    });
+
+    if (limitUserProduct.count >= 4) {
+      throw errors.PRODUCT_LIMIT;
+    }
+
     /*
     Note atribut notif
     title: title,

@@ -78,4 +78,9 @@ module.exports = {
     "Error",
     "payment_status is invalid. Enter 'PAID', 'PENDING' or 'FAILED'"
   ),
+  PRODUCT_LIMIT: new apiError(
+    401,
+    "Error",
+    "Product limit reached. Each user is limited to 4 published products"
+  ),
 };
