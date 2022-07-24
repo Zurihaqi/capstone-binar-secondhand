@@ -11,9 +11,11 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       // define association here
       Tender.belongsTo(models.User, {
+        as: "buyer",
         foreignKey: "buyer_id",
       });
       Tender.belongsTo(models.User, {
+        as: "seller",
         foreignKey: "seller_id",
       });
       Tender.belongsTo(models.Product, {
