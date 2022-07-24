@@ -5,6 +5,7 @@ const {
   Notification,
   Category,
   Transaction,
+  City,
 } = require("../db/models");
 const errors = require("../misc/errors");
 const success = require("../misc/success");
@@ -16,6 +17,18 @@ const options = {
     exclude: ["createdAt", "updatedAt"],
   },
   include: [
+    {
+      model: User,
+      as: "buyer",
+      attributes: {
+        exclude: ["password", "createdAt", "updatedAt"],
+      },
+      include: [
+        {
+          model: City,
+        },
+      ],
+    },
     {
       model: Product,
       attributes: {
@@ -209,7 +222,8 @@ module.exports = {
     try {
       const { id } = req.params;
       const tender = await Tender.findByPk(id, options);
-      if (tender.length) {
+      console.log(tender);
+      if (tender) {
         return success.GET_SUCCESS(res, tender);
       }
       throw errors.NOT_FOUND("Tender", id);
