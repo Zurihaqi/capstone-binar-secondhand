@@ -56,7 +56,9 @@ const getAllProducts = async (req, res, next) => {
     if (queries.length != 0) {
       if (Object.keys(queries[0]) == "categories_name") {
         const category = await Category.findOne({
-          where: { name: Object.values(queries[0]) },
+          where: {
+            name: { [Op.iLike]: "%" + Object.values(queries[0]) + "%" },
+          },
         });
         if (category) {
           integerQueries = [{ categories_id: category.id }];
