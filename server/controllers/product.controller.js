@@ -338,12 +338,12 @@ const updateProduct = async (req, res, next) => {
     const { name, price, description, categories_id, product_images } =
       req.body;
 
-    let status = "preview";
+    let status = "publish";
 
     const query = req.query;
 
-    if ("publish" in query) {
-      status = "publish";
+    if ("preview" in query) {
+      status = "preview";
     }
 
     const checkIfProductExist = await Product.findByPk(req.params.id);
