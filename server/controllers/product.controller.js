@@ -56,7 +56,9 @@ const getAllProducts = async (req, res, next) => {
     if (queries.length != 0) {
       if (Object.keys(queries[0]) == "categories_name") {
         const category = await Category.findOne({
-          where: { name: Object.values(queries[0]) },
+          where: {
+            name: { [Op.iLike]: "%" + Object.values(queries[0]) + "%" },
+          },
         });
         if (category) {
           integerQueries = [{ categories_id: category.id }];
@@ -79,7 +81,7 @@ const getAllProducts = async (req, res, next) => {
         ? (options.where = {
             [params]: { [Op.iLike]: `%${Object.values(queries[0])}%` },
           })
-        : delete options.where
+        : delete options.where.params
     );
     if (
       integerQueries[0]
@@ -92,14 +94,13 @@ const getAllProducts = async (req, res, next) => {
               },
             ],
           })
-        : delete options.where
+        : delete options.where.Op.or
     );
 
-    options.where = {
-      ...options.where,
-      status: "publish",
-    };
-    console.log(integerQueries[0]);
+    // options.where = {
+    //   ...options.where,
+    //   status: "publish",
+    // };
 
     const allProducts = await Product.findAll(options);
     //error handler ketika tabel kosong
