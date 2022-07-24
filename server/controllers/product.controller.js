@@ -112,6 +112,81 @@ const getAllProducts = async (req, res, next) => {
     next(error);
   }
 };
+const getAllPublishedProducts = async (req, res, next) => {
+  try {
+    let { skip, row } = req.query;
+
+    let queries = [];
+    let integerQueries = [];
+    for (const [key, value] of Object.entries(req.query)) {
+      if (
+        key !== "skip" &&
+        key !== "row" &&
+        key !== "categories_id" &&
+        key !== "price" &&
+        key !== "users_id"
+      )
+        queries.push({ [key]: value });
+      if (key === "categories_id" || key === "price" || key === "users_id")
+        integerQueries.push({ [key]: value });
+    }
+    if (queries.length != 0) {
+      if (Object.keys(queries[0]) == "categories_name") {
+        const category = await Category.findOne({
+          where: { name: Object.values(queries[0]) },
+        });
+        if (category) {
+          integerQueries = [{ categories_id: category.id }];
+        }
+        if (!category) throw errors.EMPTY_TABLE("Product");
+      }
+    }
+
+    //pagination, row = limit, skip = offset
+    if (skip ? (options.offset = +skip - 1) : delete options.offset);
+    if (row ? (options.limit = +row) : delete options.limit);
+
+    //filtering by query
+    let params;
+    if (queries[0]) {
+      params = Object.keys(queries[0]);
+    }
+    if (
+      queries[0]
+        ? (options.where = {
+            [params]: { [Op.iLike]: `%${Object.values(queries[0])}%` },
+          })
+        : delete options.where
+    );
+    if (
+      integerQueries[0]
+        ? (options.where = {
+            [Op.or]: [
+              {
+                [Object.keys(integerQueries[0])]: Object.values(
+                  integerQueries[0]
+                ),
+              },
+            ],
+          })
+        : delete options.where
+    );
+
+    options.where = {
+      ...options.where,
+      status: "publish",
+    };
+
+    const allProducts = await Product.findAll(options);
+    //error handler ketika tabel kosong
+    if (allProducts[0] == null) {
+      throw errors.EMPTY_TABLE("Product");
+    }
+    return successMsg.GET_SUCCESS(res, allProducts);
+  } catch (error) {
+    next(error);
+  }
+};
 const getAllMyProducts = async (req, res, next) => {
   try {
     let { skip, row } = req.query;
@@ -221,14 +296,6 @@ const createProduct = async (req, res, next) => {
     if (!checkIfUserExist) throw errors.NOT_FOUND("User", users_id);
     if (!checkIfCategoryExist)
       throw errors.NOT_FOUND("Category", categories_id);
-
-    const limitUserProduct = await Product.findAndCountAll({
-      where: { users_id: req.user.id },
-    });
-
-    if (limitUserProduct.count >= 4) {
-      throw errors.PRODUCT_LIMIT;
-    }
 
     /*
     Note atribut notif
@@ -357,6 +424,7 @@ const deleteProduct = async (req, res, next) => {
 
 module.exports = {
   getAllProducts,
+  getAllPublishedProducts,
   getAllMyProducts,
   getProductById,
   createProduct,
