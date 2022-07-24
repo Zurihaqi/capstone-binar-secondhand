@@ -281,12 +281,12 @@ const createProduct = async (req, res, next) => {
 
     const users_id = req.user.id;
 
-    let status = "preview";
+    let status = "publish";
 
     const query = req.query;
 
-    if ("publish" in query) {
-      status = "publish";
+    if ("preview" in query) {
+      status = "preview";
     }
 
     //Cek apakah users_id atau categories_id ada dalam database sebelum membuat product
