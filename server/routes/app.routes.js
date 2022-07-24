@@ -9,11 +9,13 @@ const userRoutes = require("./user.route");
 const wishlistRoutes = require("./wishlist.route");
 const notificationsRoutes = require("./notification.route");
 const transactionRoutes = require("./transaction.route");
+const productHome = require("./productHome.route");
 
 const errorRoutes = require("./error.route");
 
 router.use(register);
 router.use(login);
+router.use("/home", productHome);
 
 //! authentication yang bener
 router.use(authentication);
