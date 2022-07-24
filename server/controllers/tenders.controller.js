@@ -5,6 +5,7 @@ const {
   Notification,
   Category,
   Transaction,
+  City,
 } = require("../db/models");
 const errors = require("../misc/errors");
 const success = require("../misc/success");
@@ -22,6 +23,11 @@ const options = {
       attributes: {
         exclude: ["password", "createdAt", "updatedAt"],
       },
+      include: [
+        {
+          model: City,
+        },
+      ],
     },
     {
       model: Product,
