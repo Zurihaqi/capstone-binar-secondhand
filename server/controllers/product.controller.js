@@ -81,7 +81,7 @@ const getAllProducts = async (req, res, next) => {
         ? (options.where = {
             [params]: { [Op.iLike]: `%${Object.values(queries[0])}%` },
           })
-        : delete options.where.params
+        : delete options.where
     );
     if (
       integerQueries[0]
@@ -94,7 +94,7 @@ const getAllProducts = async (req, res, next) => {
               },
             ],
           })
-        : delete options.where.Op.or
+        : delete options.where
     );
 
     // options.where = {
