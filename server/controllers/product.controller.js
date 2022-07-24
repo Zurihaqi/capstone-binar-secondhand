@@ -145,10 +145,6 @@ const getAllMyProducts = async (req, res, next) => {
     if (skip ? (options.offset = +skip - 1) : delete options.offset);
     if (row ? (options.limit = +row) : delete options.limit);
 
-    options.where = {
-      users_id: req.user.id,
-    };
-
     //filtering by query
     let params;
     if (queries[0]) {
@@ -175,7 +171,9 @@ const getAllMyProducts = async (req, res, next) => {
         : delete options.where
     );
 
-    //console.log(options);
+    options.where = {
+      users_id: req.user.id,
+    };
 
     const allProducts = await Product.findAll(options);
     //error handler ketika tabel kosong
